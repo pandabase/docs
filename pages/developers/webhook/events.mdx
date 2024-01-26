@@ -1,0 +1,45 @@
+---
+title: Events
+---
+
+# Webhook Events
+
+## `transaction` Object
+
+The following types are valid:
+
+##### `order.transaction.pending`
+
+This event indicates that a transaction associated with an order is in a pending
+state, meaning it has not been processed or completed yet.
+
+##### `order.transaction.success`
+
+This event signals that the transaction associated with an order has been
+successfully completed, indicating a successful payment.
+
+##### `order.transaction.paid`
+
+This event comes after the success event and indicates that the payment for the
+transaction has been received or paid.
+
+##### `order.transaction.refunded`
+
+This event signifies that a refund has been processed for a particular
+transaction related to an order.
+
+##### `order.transaction.disputed`
+
+This event occurs when there is a dispute or disagreement related to a
+transaction. It suggests that either the customer or another party involved in
+the transaction has raised concerns or issues that need resolution.
+
+##### `order.transaction.not_paid`
+
+This event indicates that the transaction associated with an order has not been
+paid, suggesting an unsuccessful payment attempt or pending payment.
+
+##### `order.transaction.failed`
+
+This event suggests that the transaction for an order has failed, indicating an
+unsuccessful processing or authorization.

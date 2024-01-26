@@ -1,0 +1,49 @@
+---
+title: Overview
+---
+
+# Webhook Overview
+
+Pandabase webhooks can be utilized to construct real-time systems and facilitate
+payment acceptance. If you intend to provide something to a user immediately
+after a purchase, you can leverage webhook events.
+
+## Verification
+
+For additional safety, it is essential to always verify webhooks.
+
+Webhooks can be verified to ensure they were actually sent by Pandabase and not
+by a malicious entity.
+
+To verify a webhook, you will need your webhook secret or token to confirm the
+SHA256 HMAC signature. Check the `X-Pandabase-Signature` header in the webhook
+response headers.
+
+Here is a TypeScript implementation:
+
+```ts
+import crypto from 'crypto'
+
+const secret = 'wh_'
+const signature = crypto
+  .createHmac('sha256', secret)
+  .update(JSON.stringify(req.body))
+  .digest('hex')
+
+if (req.headers['X-Pandabase-Signature'] === signature) {
+  console.log('Valid signature. The response was sent by Pandabase.')
+} else {
+  console.log(
+    'Invalid signature. Deny the request as it may be from an unauthorized source.'
+  )
+}
+```
+
+This code calculates the HMAC signature by hashing the JSON string of the
+webhook payload using the SHA256 algorithm and the provided secret. The result
+is a hexadecimal digest.
+
+If the calculated signature matches the value of `X-Pandabase-Signature`, then
+the response is considered valid and was indeed sent by Pandabase itself.
+Otherwise, the request should be denied as it may be from an unauthorized
+source.
