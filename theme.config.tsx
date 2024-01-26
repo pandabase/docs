@@ -22,7 +22,8 @@ const config: DocsThemeConfig = {
   footer: {
     text: (
       <span>
-        Pandabase - Copyright © {new Date().getFullYear()} Velta, LLC. All rights reserved.
+        Pandabase - Copyright © {new Date().getFullYear()} Velta, LLC. All
+        rights reserved.
       </span>
     ),
   },
@@ -43,9 +44,8 @@ const config: DocsThemeConfig = {
           href={`https://checkout.pandabase.io/assets/panda.png`}
           type='image/png'
         />
-        <meta name='twitter:card' content='summary_large_image' />
-        <meta property='og:type' content='website' />
         <meta name='og:title' content={title} />
+        <meta name='theme-color' content='#9ebf1b' />
 
         <meta
           property='og:url'
