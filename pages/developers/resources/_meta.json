@@ -1,0 +1,12 @@
+{
+  "blacklist": "Blacklist",
+  "checkout": "Checkout",
+  "dispute": "Dispute",
+  "order": "Order",
+  "payment": "Payment",
+  "product": "Product",
+  "refund": "Refund",
+  "shop": "Shop",
+  "transaction": "Transaction",
+  "webhook": "Webhook"
+}
