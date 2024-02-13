@@ -46,9 +46,9 @@ Our error response structure consists of the following fields:
 
 ```json filename="https://api.pandabase.io/user" copy
 {
-  "statusCode": 400,
-  "message": "Authorization header is missing",
-  "error": "BAD_REQUEST"
+  "statusCode": number,
+  "message": string,
+  "error": string
 }
 ```
 
@@ -78,3 +78,8 @@ tracking and troubleshooting. This identifier can be found in the response
 headers under `X-Request-Id`. In the rare event if you encounter an issue with
 our service, providing this request identifier to our support team will expedite
 the resolution process.
+
+### Idempotency
+
+Currently, the Pandabase API does not include support for idempotency, but we
+are working on it.

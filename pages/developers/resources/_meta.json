@@ -6,6 +6,7 @@
   "payment": "Payment",
   "product": "Product",
   "refund": "Refund",
+  "team": "Team",
   "shop": "Shop",
   "transaction": "Transaction",
   "webhook": "Webhook"

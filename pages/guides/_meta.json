@@ -1,4 +1,6 @@
 {
   "orders": "Orders",
-  "disputes": "Disputes"
+  "fees": "Fees",
+  "disputes": "Disputes",
+  "teams": "Teams"
 }
