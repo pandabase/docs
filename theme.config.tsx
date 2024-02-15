@@ -19,6 +19,7 @@ const config: DocsThemeConfig = {
   search: {
     placeholder: 'Search anything',
   },
+  docsRepositoryBase: 'https://github.com/pandabase/docs',
   footer: {
     text: (
       <span>
