@@ -1,0 +1,76 @@
+---
+title: Developers - Pandabase HTTP API / Webhook
+---
+
+import { Tabs, Tab } from 'nextra/components'
+import { Callout } from 'nextra/components'
+
+---
+
+# Webhook
+
+You can configure webhook endpoints via the API to be notified about events that
+happen in your Pandabase shop.
+
+### Endpoints
+
+| METHOD |              URL              |         DESCRIPTION         |             CHANGELOG SHORT CODE |
+| :----- | :---------------------------: | :-------------------------: | -------------------------------: |
+| GET    |   `/shop/:shop_id/webhooks`   | List all webhook endpoints  |         `GET#/SHOP/{ID}/WEBHOOK` |
+| GET    | `/shop/:shop_id/webhooks/:id` | Retrieve a webhook endpoint |    `GET#/SHOP/{ID}/WEBHOOK/{ID}` |
+| POST   |   `/shop/:shop_id/webhooks`   |  Create a webhook endpoint  |        `POST#/SHOP/{ID}/WEBHOOK` |
+| DELETE | `/shop/:shop_id/webhooks/:id` |  Delete a webhook endpoint  | `DELETE#/SHOP/{ID}/WEBHOOK/{ID}` |
+
+#### List all webhook endpoints
+
+`/shop/:shop_id/webhooks`
+
+Returns a list of your webhooks.
+
+  <Tabs items={['cURL', 'Query Parameters', 'Response', 'Definition']}>
+  <Tab>
+  ```sh copy
+curl --location 'https://api.pandabase.io/shop/:shop_id/webhooks' \
+     --header 'Authorization: Bearer <TOKEN>'
+  ```
+  </Tab>
+
+    <Tab>
+    No parameters.
+
+  </Tab>
+<Tab>
+  ```json copy
+{
+    "statusCode": 200,
+    "message": "Success",
+    "payload": [
+        {
+            "id": "1758008161820787892",
+            "url": "https://events.pandabase.io",
+            "events": [
+                "Transaction"
+            ],
+            "created_at": "2024-02-15T05:50:40.168Z"
+        }
+    ]
+}
+```
+</Tab>
+<Tab>
+```ts
+interface EventPayload {
+    id: string;
+    url: string;
+    events: string[];
+    created_at: string;
+}
+```
+</Tab>
+</Tabs>
+
+#### Retrieve a webhook endpoint
+
+#### Create a webhook endpoint
+
+#### Delete a webhook endpoint
