@@ -3,3 +3,30 @@ title: Developers / SDKs / Node.js
 ---
 
 # Node.js SDK Overview
+
+### Installation
+
+Install the package with:
+
+```sh
+pnpm add pandabase
+# Or
+pnpm add pandabase
+```
+
+### Usage
+
+The package needs to be configured with your accounts secret key, which is
+available in the Pandabase Dashboard.
+
+```ts
+import Pandabase from 'pandabase'
+
+const pandabase = new Pandabase('pb_sk_live_...')
+
+const shops = await pandabase.shops.list({
+  limit: 5,
+})
+
+console.log(shops)
+```

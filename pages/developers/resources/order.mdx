@@ -4,14 +4,14 @@ title: Developers - Pandabase HTTP API / Order
 
 # Order
 
-| METHOD |                    URL                     |        DESCRIPTION         |                         CHANGELOG SHORT CODE |
-| :----- | :----------------------------------------: | :------------------------: | -------------------------------------------: |
-| GET    |    `/shop/:id/public/orders/:order_id`     |  Retrive an public order   |          `GET#/SHOP/{ID}/PUBLIC/ORDERS/{ID}` |
-| GET    |          `/shop/:shop_id/orders`           |      List all orders       |                 `GET#/SHOP/{ID}/ORDERS/{ID}` |
-| GET    |        `/shop/:shop_id/orders/:id`         |     Retrieve an order      |                 `GET#/SHOP/{ID}/ORDERS/{ID}` |
-| GET    |    `/shop/:shop_id/orders/intents/:id`     |  Retrieve an order intent  |         `GET#/SHOP/{ID}/ORDERS/INTENTS/{ID}` |
-| POST   | `/shop/:shop_id/orders/intents/initialize` | Initialize an order intent |  `POST#/SHOP/{ID}/ORDERS/INTENTS/INITIALIZE` |
-| POST   | `/shop/:shop_id/orders/intents/create/:id` |   Create an order intent   | `POST#/SHOP/{ID}/ORDERS/INTENTS/CREATE/{ID}` |
+| METHOD |                    URL                     |                DESCRIPTION |
+| :----- | :----------------------------------------: | -------------------------: |
+| GET    |    `/shop/:id/public/orders/:order_id`     |    Retrive an public order |
+| GET    |          `/shop/:shop_id/orders`           |            List all orders |
+| GET    |        `/shop/:shop_id/orders/:id`         |          Retrieve an order |
+| GET    |    `/shop/:shop_id/orders/intents/:id`     |   Retrieve an order intent |
+| POST   | `/shop/:shop_id/orders/intents/initialize` | Initialize an order intent |
+| POST   | `/shop/:shop_id/orders/intents/create/:id` |     Create an order intent |
 
 #### Retrive an public order
 
@@ -35,4 +35,4 @@ title: Developers - Pandabase HTTP API / Order
 
 #### Create an order intent
 
-/shop/:shop_id/orders/intents/create/:id
+`/shop/:shop_id/orders/intents/create/:id`

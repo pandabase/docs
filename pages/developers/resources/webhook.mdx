@@ -14,20 +14,20 @@ happen in your Pandabase shop.
 
 ### Endpoints
 
-| METHOD |              URL              |         DESCRIPTION         |             CHANGELOG SHORT CODE |
-| :----- | :---------------------------: | :-------------------------: | -------------------------------: |
-| GET    |   `/shop/:shop_id/webhooks`   | List all webhook endpoints  |         `GET#/SHOP/{ID}/WEBHOOK` |
-| GET    | `/shop/:shop_id/webhooks/:id` | Retrieve a webhook endpoint |    `GET#/SHOP/{ID}/WEBHOOK/{ID}` |
-| POST   |   `/shop/:shop_id/webhooks`   |  Create a webhook endpoint  |        `POST#/SHOP/{ID}/WEBHOOK` |
-| DELETE | `/shop/:shop_id/webhooks/:id` |  Delete a webhook endpoint  | `DELETE#/SHOP/{ID}/WEBHOOK/{ID}` |
+| METHOD |              URL              |                 DESCRIPTION |
+| :----- | :---------------------------: | --------------------------: |
+| GET    |   `/shop/:shop_id/webhooks`   |  List all webhook endpoints |
+| GET    | `/shop/:shop_id/webhooks/:id` | Retrieve a webhook endpoint |
+| POST   |   `/shop/:shop_id/webhooks`   |   Create a webhook endpoint |
+| DELETE | `/shop/:shop_id/webhooks/:id` |   Delete a webhook endpoint |
 
-#### List all webhook endpoints
+#### List all webhook
 
 `/shop/:shop_id/webhooks`
 
 Returns a list of your webhooks.
 
-  <Tabs items={['cURL', 'Query Parameters', 'Response', 'Definition']}>
+  <Tabs items={['cURL', 'Query Parameters', 'Response', 'Type Definition']}>
   <Tab>
   ```sh copy
 curl --location 'https://api.pandabase.io/shop/:shop_id/webhooks' \
@@ -69,8 +69,14 @@ interface EventPayload {
 </Tab>
 </Tabs>
 
-#### Retrieve a webhook endpoint
+#### Retrieve a webhook
 
-#### Create a webhook endpoint
+`/shop/:shop_id/webhooks/:id`
 
-#### Delete a webhook endpoint
+#### Create a webhook
+
+`/shop/:shop_id/webhooks`
+
+#### Delete a webhook
+
+`/shop/:shop_id/webhooks/:id`
