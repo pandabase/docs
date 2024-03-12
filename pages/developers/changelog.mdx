@@ -9,15 +9,87 @@ title: Changelog
 This changelog lists all additions and updates to the Pandabase API, in
 chronological order.
 
-##### February 22, 2024
+#### March 12, 2024
 
-- Added `fee` property on transaction objects
+- Added the following properties to the `account` object:
+
+  - `account["flags"]["verified"]`
+  - `account["flags"]["two_fa_enabled"]`
+  - `account["flags"]["deleted"]`
+  - `account["flags"]["requirements"]{"activated"}`
+
+- Added the following properties to the `shop` object:
+
+  - `shop["analytics"]["total_sales"]`
+  - `shop["analytics"]["total_earned"]`
+  - `shop["analytics"]["pending_balance"]`
+  - `shop["analytics"]["dispute_rate"]`
+  - `shop["flags"]["statement_descriptor"]`
+  - `shop["flags"]["features"]["pmp_enabled"]`
+  - `shop["flags"]["features"]["chargeback_protection_enabled"]`
+  - `shop["flags"]["features"]["storefront_enabled"]`
+  - `shop["flags"]["features"]["checkout_api_enabled"]`
+  - `shop["flags"]["features"]["domain_enabled"]`
+  - `shop["flags"]["features"]["ssl_enabled"]`
+  - `shop["flags"]["connect"]{"id", "enabled", "type"}`
+
+- Added the following properties to the `transaction` object:
+
+  - `transactions["fee"]`
+  - `transactions["early_fraud_warning"]`
+
+- Added the following properties to the `order` object:
+
+  - `order["discounted"]`
+  - `order["discount_code"]`
+  - `order["customer"]["customer_id"]`
+  - `order["customer"]["shipping_address_id"]`
+  - `order["customer"]["billing_address_id"]`
+
+- Added the following properties to the `order_item`:
+
+  - `product["name"]` as `order_item["name"]`
+  - `product["id"]` as `order_item["product_id"]`
+  - `order_itemp["quantity"]`
+
+- Added the following properties to the `refund` object:
+
+  - `refund["reason"]`
+  - `refund["status"]`
+
+- Added the following properties to the `dispute` object:
+
+  - `dispute["dispute_id"]`
+  - `dispute["reason"]`
+  - `dispute["status"]`
+  - `dispute["method"]`
+  - `dispute["amount"]`
+  - `dispute["total_amount"]`
+  - `dispute["fee"]`
+
+- Added the following properties to the `coupon` object:
+
+  - `coupon["name"]`
+  - `coupon["code"]`
+  - `coupon["type"]`
+  - `coupon["value"]`
+  - `coupon["limit"]`
+  - `coupon["limit_enabled"]`
+
+- Added the `address["state"]` property to the `shipping_address` and
+  `billing_address` objects.
+
+- Added the `analytics["dispute"]` property to the `analytics` object.
+
+#### February 22, 2024
+
+- Added `` property on transaction objects
 
 #### February 18, 2024
 
 - General Team release
 
-##### February 15, 2024
+#### February 15, 2024
 
 - Implemented support for `sortBy.status`, and `sortBy.date` query parameters in
   the List Orders route.
