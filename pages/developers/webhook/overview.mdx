@@ -2,6 +2,8 @@
 title: Developers / Webhook Overview
 ---
 
+import { Tabs } from 'nextra/components'
+
 # Webhook Overview
 
 Pandabase webhooks can be utilized to construct real-time systems and facilitate
@@ -16,34 +18,283 @@ Webhooks can be verified to ensure they were actually sent by Pandabase and not
 by a malicious entity.
 
 To verify a webhook, you will need your webhook secret or token to confirm the
-SHA256 HMAC signature. Check the `X-Pandabase-Signature` header in the webhook
-response headers.
+SHA256 HMAC signature. Check the `X-Pandabase-Signature` and
+`X-Pandabase-Timestamp` header in the webhook response headers.
 
-Here is a TypeScript implementation:
+Here are several examples:
 
-```ts
+<Tabs items={['TypeScript', 'Go', 'Rust', 'Python', 'Ruby', '.NET', 'Java']}>
+  <Tabs.Tab>
+  ```ts copy
 import crypto from 'crypto'
 
-const secret = 'wh_'
-const signature = crypto
-  .createHmac('sha256', secret)
-  .update(JSON.stringify(req.body))
-  .digest('hex')
+const secret = 'wh\_' // paste your secret here. const signature = crypto
+.createHmac('sha256', secret) .update(JSON.stringify({ event: req.body,
+timestamp: req.headers['X-Pandabase-Timestamp'] })) .digest('hex')
 
-if (req.headers['X-Pandabase-Signature'] === signature) {
-  console.log('Valid signature. The response was sent by Pandabase.')
-} else {
-  console.log(
-    'Invalid signature. Deny the request as it may be from an unauthorized source.'
-  )
+if (req.headers['X-Pandabase-Signature'] === signature) { console.log('Valid
+signature. The response was sent by Pandabase.') } else { console.log('Invalid
+signature.') }
+
+````
+</Tabs.Tab>
+<Tabs.Tab>
+```go copy
+package main
+
+import (
+  "crypto/hmac"
+  "crypto/sha256"
+  "encoding/hex"
+  "encoding/json"
+  "fmt"
+  "net/http"
+)
+
+func main() {
+  http.HandleFunc("/", verifyWebhook)
+  http.ListenAndServe(":8080", nil)
 }
+
+func verifyWebhook(w http.ResponseWriter, req *http.Request) {
+  timestamp := req.Header.Get("X-Pandabase-Timestamp")
+  signature := req.Header.Get("X-Pandabase-Signature")
+
+  requestBody := map[string]interface{}{
+      "event":     req.Body,
+      "timestamp": timestamp,
+  }
+  requestBodyJSON, err := json.Marshal(requestBody)
+  if err != nil {
+      fmt.Println("Error marshaling request body to JSON:", err)
+      return
+  }
+
+  h := hmac.New(sha256.New, []byte("wh_")) // paste your secret here.
+  h.Write(requestBodyJSON)
+  calculatedSignature := hex.EncodeToString(h.Sum(nil))
+
+  if signature == calculatedSignature {
+      fmt.Println("Valid signature. The response was sent by Pandabase.")
+  } else {
+      fmt.Println("Invalid signature")
+  }
+}
+````
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+  ```rs copy
+use crypto::digest::Digest;
+use crypto::hmac::Hmac;
+use crypto::sha2::Sha256;
+use std::io::Read;
+use std::net::TcpListener;
+
+fn main() { let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
+
+    for stream in listener.incoming() {
+        let stream = stream.unwrap();
+
+        handle_connection(stream);
+    }
+
+}
+
+fn handle_connection(mut stream: std::net::TcpStream) { let mut buffer = [0;
+1024]; stream.read(&mut buffer).unwrap();
+
+    let request = String::from_utf8_lossy(&buffer[..]);
+    let mut lines = request.lines();
+
+    let mut headers: Vec<&str> = vec![];
+    while let Some(line) = lines.next() {
+        if line.is_empty() {
+            break;
+        }
+        headers.push(line);
+    }
+
+    let mut timestamp = "";
+    let mut signature = "";
+    for header in headers {
+        let parts: Vec<&str> = header.splitn(2, ": ").collect();
+        if parts.len() != 2 {
+            continue;
+        }
+        match parts[0] {
+            "X-Pandabase-Timestamp" => timestamp = parts[1],
+            "X-Pandabase-Signature" => signature = parts[1],
+            _ => {}
+        }
+    }
+
+    let mut hasher = Hmac::new(Sha256::new(), b"wh_"); // paste your secret here.
+    let mut body = "{}";
+    if let Some(idx) = request.find("\r\n\r\n") {
+        body = &request[idx + 4..];
+    }
+    hasher.input(body.as_bytes());
+    hasher.input(timestamp.as_bytes());
+
+    let calculated_signature = hasher.result();
+    let calculated_signature_hex = hex::encode(calculated_signature.code());
+
+    if calculated_signature_hex == signature {
+        println!("Valid signature. The response was sent by Pandabase.");
+    } else {
+        println!("Invalid signature");
+    }
+
+}
+
+````
+</Tabs.Tab>
+<Tabs.Tab>
+```py copy
+import hashlib
+import hmac
+from flask import Flask, request
+
+app = Flask(__name__)
+
+@app.route('/', methods=['POST'])
+def verify_webhook():
+  secret = b'wh_' # paste your secret here.
+  timestamp = request.headers.get('X-Pandabase-Timestamp', '')
+  signature = request.headers.get('X-Pandabase-Signature', '')
+
+  body = request.get_data()
+
+  calculated_signature = hmac.new(secret, body + timestamp.encode(), hashlib.sha256).hexdigest()
+
+  if signature == calculated_signature:
+      return 'Valid signature. The response was sent by Pandabase.', 200
+  else:
+      return 'Invalid signature', 401
+
+if __name__ == '__main__':
+  app.run(debug=True, port=8080)
+````
+
+  </Tabs.Tab>
+  <Tabs.Tab>
+  ```rb copy
+require 'sinatra'
+require 'openssl'
+require 'json'
+
+post '/' do secret = 'wh\_' # paste your secret here. timestamp =
+request.env['HTTP_X_Pandabase_Timestamp'] signature =
+request.env['HTTP_X_Pandabase_Signature']
+
+body = request.body.read
+
+calculated_signature = OpenSSL::HMAC.hexdigest('sha256', secret, body +
+timestamp.to_s)
+
+if signature == calculated_signature 'Valid signature. The response was sent by
+Pandabase.' else 'Invalid signature' end end
+
+````
+</Tabs.Tab>
+  <Tabs.Tab>
+```cs copy
+using System;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.Mvc;
+
+namespace WebhookVerification.Controllers
+{
+  [Route("/")]
+  [ApiController]
+  public class WebhookController : ControllerBase
+  {
+      [HttpPost]
+      public IActionResult VerifyWebhook()
+      {
+          using (StreamReader reader = new StreamReader(Request.Body))
+          {
+              string body = reader.ReadToEnd();
+
+              string timestamp = Request.Headers["X-Pandabase-Timestamp"];
+              string signature = Request.Headers["X-Pandabase-Signature"];
+
+              string secret = "wh_"; // paste your secret here.
+
+              using (HMACSHA256 hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret)))
+              {
+                  byte[] computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(body + timestamp));
+                  string computedSignature = BitConverter.ToString(computedHash).Replace("-", "").ToLower();
+
+                  if (signature == computedSignature)
+                  {
+                      return Ok("Valid signature. The response was sent by Pandabase.");
+                  }
+                  else
+                  {
+                      return Unauthorized("Invalid signature");
+                  }
+              }
+          }
+      }
+  }
+}
+````
+
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+  ```java copy
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class WebhookServlet extends HttpServlet { protected void
+doPost(HttpServletRequest request, HttpServletResponse response) throws
+IOException { BufferedReader reader = request.getReader(); StringBuilder
+requestBody = new StringBuilder(); String line; while ((line =
+reader.readLine()) != null) { requestBody.append(line); }
+
+        String timestamp = request.getHeader("X-Pandabase-Timestamp");
+        String signature = request.getHeader("X-Pandabase-Signature");
+        String secret = "wh_"; // paste your secret here.
+
+        try {
+            Mac hmacSha256 = Mac.getInstance("HmacSHA256");
+            SecretKeySpec secretKey = new SecretKeySpec(secret.getBytes(), "HmacSHA256");
+            hmacSha256.init(secretKey);
+            byte[] digest = hmacSha256.doFinal((requestBody.toString() + timestamp).getBytes());
+            String calculatedSignature = Base64.getEncoder().encodeToString(digest);
+
+            if (signature.equals(calculatedSignature)) {
+                response.getWriter().println("Valid signature. The response was sent by Pandabase.");
+            } else {
+                response.getWriter().println("Invalid signature");
+            }
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            e.printStackTrace();
+            response.getWriter().println("Error: " + e.getMessage());
+        }
+    }
+
+}
+
 ```
+</Tabs.Tab>
+</Tabs>
 
 This code calculates the HMAC signature by hashing the JSON string of the
 webhook payload using the SHA256 algorithm and the provided secret. The result
 is a hexadecimal digest.
-
-If the calculated signature matches the value of `X-Pandabase-Signature`, then
-the response is considered valid and was indeed sent by Pandabase itself.
-Otherwise, the request should be denied as it may be from an unauthorized
-source.
+```

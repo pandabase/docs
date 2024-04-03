@@ -3,3 +3,158 @@ title: Developers / SDKs / Go
 ---
 
 # Go SDK Overview
+
+### Installation
+
+Install the package with:
+
+```sh
+go get github.com/pandabase/go
+```
+
+### Usage
+
+The package needs to be configured with your account's secret key, which is
+available in the Pandabase Dashboard.
+
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/pandabase/go"
+    "os"
+)
+
+func main() {
+    pandabase := pandabase.New(os.Getenv("PANDABASE_SECRET"), true)
+    vendor := pandabase.NewShopClient(os.Getenv("PANDABASE_SHOP_ID"))
+
+    fmt.Println(pandabase.Shops.List(map[string]interface{}{"limit": 5}))
+
+    orders, _ := vendor.Orders.List(map[string]interface{}{
+        "sort_by": map[string]string{
+            "status": "PENDING",
+            "date":   "desc",
+        },
+        "limit": 5,
+    })
+
+    for _, order := range orders {
+        order, _ := vendor.Orders.Retrieve(map[string]interface{}{"id": order.ID})
+
+        fmt.Println(order)
+    }
+
+    fmt.Println(vendor.Payments.Create(map[string]interface{}{"type": "overlay_checkout"}))
+}
+```
+
+#### `Pandabase`
+
+- `User`
+  - `Retrieve()`
+- `Shops`
+  - `List()`
+- `Payouts`
+  - `List()`
+  - `Retrieve(id)`
+  - `Create(data)`
+
+#### `NewShopClient`
+
+- ##### `Analytics`
+
+  - `Retrieve()`
+  - `GroupBy(types []string, days int)`
+
+- #### `Blacklists`
+
+  - `List()`
+  - `Retrieve(id)`
+  - `Create(id, data)`
+  - `Update(id, data)`
+  - `Delete(id)`
+  - `PurgeAll()`
+
+- #### `Coupons`
+
+  - `List()`
+  - `Retrieve(id)`
+  - `Create(id, data)`
+  - `Update(id, data)`
+  - `Delete(id)`
+
+- #### `Disputes`
+
+  - `List()`
+  - `Retrieve(id)`
+  - `Respond(id, data, submit)`
+
+- #### `Files`
+
+  - `List()`
+  - `Retrieve(id)`
+
+- #### `Orders`
+
+  - `List()`
+  - `Retrieve(id)`
+
+- #### `Payments`
+
+  - `Retrieve(id)`
+  - `Create(data)`
+
+- #### `Products`
+
+  - `List()`
+  - `Retrieve(id)`
+  - `Create(id, data)`
+  - `Update(id, data)`
+  - `Delete(id)`
+  - `PurgeAll()`
+
+- #### `Refunds`
+
+  - `List()`
+  - `Retrieve(id)`
+  - `Create(id, data)`
+
+- #### `Reviews`
+
+  - `List()`
+  - `Retrieve(id)`
+  - `Update(id, data)`
+
+- #### `Settings`
+
+  - `Retrieve()`
+  - `Update(id, data)`
+
+- #### `Taxes`
+
+  - `List()`
+
+- #### `Teams`
+
+  - `List()`
+  - `Retrieve(id)`
+  - `Create(data)`
+  - `Update(id, data)`
+  - `Delete(id)`
+
+- #### `Tokens`
+
+  - `List()`
+  - `Retrieve(id)`
+  - `Create(data)`
+  - `Update(id, data)`
+  - `Delete(id)`
+
+- #### `Webhooks`
+  - `List()`
+  - `Retrieve(id)`
+  - `Create(data)`
+  - `Update(id, data)`
+  - `Delete(id)`

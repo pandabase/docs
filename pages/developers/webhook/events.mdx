@@ -4,42 +4,73 @@ title: Developers / Webhook Events
 
 # Webhook Events
 
-## `transaction` Object
+## `order` Object
 
 The following types are valid:
 
-##### `order.transaction.pending`
+##### `order.pending`
 
 This event indicates that a transaction associated with an order is in a pending
 state, meaning it has not been processed or completed yet.
 
-##### `order.transaction.success`
+##### `order.success`
 
 This event signals that the transaction associated with an order has been
 successfully completed, indicating a successful payment.
 
-##### `order.transaction.paid`
+##### `order.paid`
 
 This event comes after the success event and indicates that the payment for the
 transaction has been received or paid.
 
-##### `order.transaction.refunded`
+##### `order.refunded`
 
 This event signifies that a refund has been processed for a particular
 transaction related to an order.
 
-##### `order.transaction.disputed`
+##### `order.disputed`
 
 This event occurs when there is a dispute or disagreement related to a
 transaction. It suggests that either the customer or another party involved in
 the transaction has raised concerns or issues that need resolution.
 
-##### `order.transaction.not_paid`
+##### `order.not_paid`
 
 This event indicates that the transaction associated with an order has not been
 paid, suggesting an unsuccessful payment attempt or pending payment.
 
-##### `order.transaction.failed`
+##### `order.failed`
 
 This event suggests that the transaction for an order has failed, indicating an
 unsuccessful processing or authorization.
+
+## `payment` Object
+
+The following types are valid:
+
+##### `payment.pending`
+
+This webhook event occurs when a payment is initiated but is pending. It means
+that the payment process has been started but is not yet completed. This could
+happens, when for example, if the user has initiated a payment but has not yet
+paid idText.
+
+##### `payment.success`
+
+This webhook event occurs when a payment is successfully completed. It indicates
+that the payment process has been successfully finalized, and the funds have
+been transferred from the payer to the payee. This is typically the desired
+outcome for most transactions.
+
+##### `payment.paid`
+
+This webhook event is similar to payment.success and also indicates that a
+payment has been successfully completed. However, it might be used in cases
+where additional actions are taken after the payment is confirmed, such as
+updating the order status or sending a confirmation email.
+
+##### `payment.failed`
+
+This webhook event occurs when a payment attempt fails to complete successfully.
+It indicates that the payment process encountered an issue or was unable to be
+processed for some reason.
