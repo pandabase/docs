@@ -9,7 +9,7 @@ title: Developers / SDKs / Go
 Install the package with:
 
 ```sh
-go get github.com/pandabase/go
+go get -u github.com/pandabase/pandabase-go
 ```
 
 ### Usage
@@ -17,12 +17,12 @@ go get github.com/pandabase/go
 The package needs to be configured with your account's secret key, which is
 available in the Pandabase Dashboard.
 
-```go
+```go copy
 package main
 
 import (
     "fmt"
-    "github.com/pandabase/go"
+    "github.com/pandabase/pandabase-go"
     "os"
 )
 
@@ -46,7 +46,7 @@ func main() {
         fmt.Println(order)
     }
 
-    fmt.Println(vendor.Payments.Create(map[string]interface{}{"type": "overlay_checkout"}))
+    fmt.Println(vendor.Payments.Create(map[string]interface{}{"type": "overlay_session"}))
 }
 ```
 

@@ -26,15 +26,15 @@ Here are several examples:
 <Tabs items={['TypeScript', 'Go', 'Rust', 'Python', 'Ruby', '.NET', 'Java']}>
   <Tabs.Tab>
   ```ts copy
-import crypto from 'crypto'
+import crypto from 'crypto';
 
-const secret = 'wh\_' // paste your secret here. const signature = crypto
-.createHmac('sha256', secret) .update(JSON.stringify({ event: req.body,
-timestamp: req.headers['X-Pandabase-Timestamp'] })) .digest('hex')
+const secret = 'wh\_'; // paste your secret here. const signature = crypto
+crypto.createHmac('sha256', secret) .update( JSON.stringify( { event: req.body,
+timestamp: req.headers['X-Pandabase-Timestamp'] } )) .digest('hex');
 
 if (req.headers['X-Pandabase-Signature'] === signature) { console.log('Valid
-signature. The response was sent by Pandabase.') } else { console.log('Invalid
-signature.') }
+signature. The response was sent by Pandabase.'); } else { console.log('Invalid
+signature.'); };
 
 ````
 </Tabs.Tab>
@@ -102,12 +102,11 @@ fn main() { let listener = TcpListener::bind("127.0.0.1:8080").unwrap();
 }
 
 fn handle_connection(mut stream: std::net::TcpStream) { let mut buffer = [0;
-1024]; stream.read(&mut buffer).unwrap();
-
-    let request = String::from_utf8_lossy(&buffer[..]);
-    let mut lines = request.lines();
+1024]; stream.read(&mut buffer).unwrap(); let request =
+String::from_utf8_lossy(&buffer[..]); let mut lines = request.lines();
 
     let mut headers: Vec<&str> = vec![];
+
     while let Some(line) = lines.next() {
         if line.is_empty() {
             break;
@@ -117,6 +116,7 @@ fn handle_connection(mut stream: std::net::TcpStream) { let mut buffer = [0;
 
     let mut timestamp = "";
     let mut signature = "";
+
     for header in headers {
         let parts: Vec<&str> = header.splitn(2, ": ").collect();
         if parts.len() != 2 {
@@ -131,9 +131,11 @@ fn handle_connection(mut stream: std::net::TcpStream) { let mut buffer = [0;
 
     let mut hasher = Hmac::new(Sha256::new(), b"wh_"); // paste your secret here.
     let mut body = "{}";
+
     if let Some(idx) = request.find("\r\n\r\n") {
         body = &request[idx + 4..];
     }
+
     hasher.input(body.as_bytes());
     hasher.input(timestamp.as_bytes());
 

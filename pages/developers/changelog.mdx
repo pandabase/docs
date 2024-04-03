@@ -9,6 +9,22 @@ title: Changelog
 This changelog lists all additions and updates to the Pandabase API, in
 chronological order.
 
+#### April 3, 2024
+
+- Updated event terminology from `transaction` to `order` object
+
+  - The event type previously referred to as `transaction` has been standardized
+    as `order` object. The associated identifier now returns as `order.id`.
+  - Renamed all `transaction` event types to `order` for consistency.
+
+- Introduced new event types related to payments
+  - Added `payment` event type.
+  - Included new status events under `payment`:
+    - `payment.pending`: Indicates a pending payment.
+    - `payment.paid`: Denotes a successfully processed payment.
+    - `payment.success`: Signifies a successfully completed payment transaction.
+    - `payment.failed`: Indicates a failed payment transaction.
+
 #### March 12, 2024
 
 - Added the following properties to the `account` object:

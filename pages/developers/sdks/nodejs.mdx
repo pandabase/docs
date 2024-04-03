@@ -24,7 +24,7 @@ npm install @pandabase/node
 The package needs to be configured with your accounts secret key, which is
 available in the Pandabase Dashboard.
 
-```ts
+```ts copy
 import * as Pandabase from '@pandabase/node';
 
 const pandabase = new Pandabase(process.env.PANDABASE_SECRET as string,
@@ -48,7 +48,7 @@ for (const order of orders) {
   console.log(order);
 }
 
-console.log(await vendor.payments.create({ type: 'overlay_checkout', { ...details } }));
+console.log(await vendor.payments.create({ type: 'overlay_session', { ...details } }));
 ```
 
 import { env } from 'process'
