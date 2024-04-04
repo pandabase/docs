@@ -122,32 +122,50 @@ curl -X POST \
 ### React Usage
 
 <Callout type='info' emoji='ℹ️'>
-  You can enable darkmode by passing in `theme="dark"` prop to the
-  `PaymentOverlay` component.
+  You can enable dark mode by passing in `theme="dark"` prop to the
+  `PaymentElement` component.
 </Callout>
 
 ```ts copy
-import React from 'react';
-import { PaymentOverlay, usePayment } from "@pandabase/react-elements";
+import React, { useState } from "react";
+import PaymentElement from "@pandabase/react-elements";
 
-const MyPage: React.FC = () => {
-  const { overlaySession, state } = usePayment();
+const App: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleCheckout = async () => {
-    await overlaySession({
-      line_items: [
-        { id: "pt_...", quantity: 1 },
-        { id: "pt_...", quantity: 2 }
-      ]
-    });
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
-    <PaymentOverlay state={state}>
-      <button onClick={handleCheckout}>Checkout</button>
-    </PaymentOverlay>
-  );
-}
+    <div>
+        <button
+          onClick={handleOpenModal}
+        >
+          Checkout
+        </button>
 
-export default MyPage;
+      <PaymentElement
+        data={{
+          customer: {
+            email: "john@example.com",
+          },
+          line_items: [
+            { id: "1", quantity: 2 },
+            { id: "2", quantity: 2 },
+          ],
+          type: "overlay_session",
+        }}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
+    </div>
+  );
+};
+
+export default App;
 ```
