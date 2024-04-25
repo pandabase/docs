@@ -1,0 +1,243 @@
+---
+title: Payouts
+---
+
+# Payouts
+
+Your balance is always in USD, regardless of your location. When we pay you out,
+we'll convert the amount to your local currency using the current exchange rate.
+However, if you're not in a region where we support local transfers, we'll have
+to wire transfer the funds to you, which typically takes 2-5 business days and
+incurs a $10 fee.
+
+Payouts are handled through Stripe Connect if you've integrated it. But even if
+you haven't, we'll still process your PayPal and crypto payments through bank
+wire or local transfers.
+
+If you haven't set up Stripe Connect, we'll send your payouts to your bank
+account. Your information is safe with a third-party payout company that ensures
+compliance with KYC/AML regulations.
+
+Below is the fee structure for payout processing. Please note that the cutoff
+time for payout requests is 7:00 PM UTC.
+
+### Payout methods
+
+| Payout method    |              Country               |          Type | Currency |                               Fees |           Time of arrival |
+| :--------------- | :--------------------------------: | ------------: | -------: | ---------------------------------: | ------------------------: |
+| ACH              |           United States            |         Local |      USD |                          $1.00 USD |         Next business day |
+| EFT              |               Canada               |         Local | USD, CAD |                          $1.00 USD | Same or next business day |
+| FPS              |           United Kingdom           |         Local |      GBP |                          $4.00 USD | Same or next business day |
+| SEPA             |                 EU                 |         Local |      EUR |                          $4.00 USD |         Next business day |
+| NPP              |             Australia              |         Local |      AUD |                          $4.00 USD |  One or two business days |
+| BECS             |            New Zealand             |         Local |      NZD |                          $4.00 USD |  One or two business days |
+| IACH             |       [See countries](#iach)       | International |    Local |                          $4.00 USD | One or five business days |
+| SWIFT Bank Wires | [See countries](#swift-bank-wires) | International |    Local | $10.00 USD ($25 for Same Currency) | One or five business days |
+
+### SWIFT Bank Wires
+
+| Country                                    | Currency | Delivery Time     | Cutoff Time |
+| ------------------------------------------ | -------- | ----------------- | ----------- |
+| Albania                                    | ALB      | 3-5 business days | 7:00PM UTC  |
+| American Samoa                             | USD      | 3-5 business days | 7:00PM UTC  |
+| Andorra                                    | EUR      | 3-5 business days | 7:00PM UTC  |
+| Anguilla                                   | XCD      | 3-5 business days | 7:00PM UTC  |
+| Antigua & Barbuda                          | XCD      | 3-5 business days | 7:00PM UTC  |
+| Armenia                                    | AMD      | 3-5 business days | 7:00PM UTC  |
+| Aruba                                      | AWG      | 3-5 business days | 7:00PM UTC  |
+| Azerbaijan                                 | AZN      | 3-5 business days | 7:00PM UTC  |
+| Bahamas                                    | BSD      | 3-5 business days | 7:00PM UTC  |
+| Bahrain                                    | BHD      | 3-5 business days | 7:00PM UTC  |
+| Bangladesh                                 | BDT      | 3-5 business days | 7:00PM UTC  |
+| Barbados                                   | BBD      | 3-5 business days | 7:00PM UTC  |
+| Belize                                     | BZD      | 3-5 business days | 7:00PM UTC  |
+| Bermuda                                    | BMD      | 3-5 business days | 7:00PM UTC  |
+| Bhutan                                     | BTN      | 3-5 business days | 7:00PM UTC  |
+| Bolivia                                    | BOB      | 3-5 business days | 7:00PM UTC  |
+| Bonaire, Sint Eustatius & Saba             | USD      | 3-5 business days | 7:00PM UTC  |
+| Bosnia & Herzegovina                       | BAM      | 3-5 business days | 7:00PM UTC  |
+| Botswana                                   | BWP      | 3-5 business days | 7:00PM UTC  |
+| Brunei                                     | BND      | 3-5 business days | 7:00PM UTC  |
+| Burundi                                    | BIF      | 3-5 business days | 7:00PM UTC  |
+| Cambodia                                   | KHR      | 3-5 business days | 7:00PM UTC  |
+| Cayman Islands                             | KYD      | 3-5 business days | 7:00PM UTC  |
+| Christmas Island                           | AUD      | 3-5 business days | 7:00PM UTC  |
+| Comoros                                    | KMF      | 3-5 business days | 7:00PM UTC  |
+| Cook Islands                               | NZD      | 3-5 business days | 7:00PM UTC  |
+| Costa Rica                                 | CRC      | 3-5 business days | 7:00PM UTC  |
+| Curacao                                    | ANG      | 3-5 business days | 7:00PM UTC  |
+| Djibouti                                   | DJF      | 3-5 business days | 7:00PM UTC  |
+| Dominica                                   | XCD      | 3-5 business days | 7:00PM UTC  |
+| Dominican Republic                         | DOP      | 3-5 business days | 7:00PM UTC  |
+| Ecuador                                    | USD      | 3-5 business days | 7:00PM UTC  |
+| Egypt \*                                   | EGP      | 3-5 business days | 7:00PM UTC  |
+| El Salvador                                | USD      | 3-5 business days | 7:00PM UTC  |
+| Falkland Islands (Malvinas)                | FKP      | 3-5 business days | 7:00PM UTC  |
+| Faroe Islands                              | DKK      | 3-5 business days | 7:00PM UTC  |
+| Fiji                                       | FJD      | 3-5 business days | 7:00PM UTC  |
+| French Polynesia                           | XPF      | 3-5 business days | 7:00PM UTC  |
+| French Southern Territories                | EUR      | 3-5 business days | 7:00PM UTC  |
+| Gambia                                     | GMD      | 3-5 business days | 7:00PM UTC  |
+| Georgia                                    | GEL      | 3-5 business days | 7:00PM UTC  |
+| Ghana                                      | GHS      | 3-5 business days | 7:00PM UTC  |
+| Greenland                                  | DKK      | 3-5 business days | 7:00PM UTC  |
+| Grenada                                    | XCD      | 3-5 business days | 7:00PM UTC  |
+| Guam                                       | USD      | 3-5 business days | 7:00PM UTC  |
+| Guatemala                                  | GTQ      | 3-5 business days | 7:00PM UTC  |
+| Guinea                                     | GNF      | 3-5 business days | 7:00PM UTC  |
+| Guyana                                     | GYD      | 3-5 business days | 7:00PM UTC  |
+| Haiti                                      | HTG      | 3-5 business days | 7:00PM UTC  |
+| Honduras                                   | HNL      | 3-5 business days | 7:00PM UTC  |
+| Israel                                     | ILS      | 3-5 business days | 7:00PM UTC  |
+| Jamaica                                    | JMD      | 3-5 business days | 7:00PM UTC  |
+| Japan                                      | JPY      | 2-3 business days | 7:00PM UTC  |
+| Jordan                                     | JOD      | 3-5 business days | 7:00PM UTC  |
+| Kazakhstan                                 | KZT      | 3-5 business days | 7:00PM UTC  |
+| Kiribati                                   | AUD      | 3-5 business days | 7:00PM UTC  |
+| South Korea                                | KRW      | 3-5 business days | 7:00PM UTC  |
+| Kosovo                                     | EUR      | 3-5 business days | 7:00PM UTC  |
+| Kuwait                                     | KWD      | 3-5 business days | 7:00PM UTC  |
+| Kyrgyzstan                                 | KGS      | 3-5 business days | 7:00PM UTC  |
+| Laos                                       | LAK      | 3-5 business days | 7:00PM UTC  |
+| Lesotho                                    | LSL      | 3-5 business days | 7:00PM UTC  |
+| Macau                                      | MOP      | 3-5 business days | 7:00PM UTC  |
+| Macedonia                                  | MKD      | 3-5 business days | 7:00PM UTC  |
+| Maldives                                   | MVR      | 3-5 business days | 7:00PM UTC  |
+| Mali                                       | USD      | 3-5 business days | 7:00PM UTC  |
+| Marshall Islands                           | USD      | 3-5 business days | 7:00PM UTC  |
+| Mauritius                                  | MUR      | 3-5 business days | 7:00PM UTC  |
+| Micronesia (Federated States of)           | USD      | 3-5 business days | 7:00PM UTC  |
+| Moldova                                    | MDL      | 3-5 business days | 7:00PM UTC  |
+| Mongolia                                   | MNT      | 3-5 business days | 7:00PM UTC  |
+| Montenegro                                 | EUR      | 3-5 business days | 7:00PM UTC  |
+| Montserrat                                 | XCD      | 3-5 business days | 7:00PM UTC  |
+| Namibia                                    | NAD      | 3-5 business days | 7:00PM UTC  |
+| Nepal                                      | NPR      | 3-5 business days | 7:00PM UTC  |
+| New Caledonia                              | XPF      | 3-5 business days | 7:00PM UTC  |
+| New Zealand \*                             | NZD      | 3-5 business days | 7:00PM UTC  |
+| Nicaragua                                  | NIO      | 3-5 business days | 7:00PM UTC  |
+| Niue                                       | NZD      | 3-5 business days | 7:00PM UTC  |
+| Norfolk Island                             | AUD      | 3-5 business days | 7:00PM UTC  |
+| Northern Mariana Islands                   | USD      | 3-5 business days | 7:00PM UTC  |
+| Oman                                       | OMR      | 3-5 business days | 7:00PM UTC  |
+| Pakistan \*                                | PKR      | 3-5 business days | 7:00PM UTC  |
+| Palau                                      | USD      | 3-5 business days | 7:00PM UTC  |
+| Panama                                     | PAB      | 3-5 business days | 7:00PM UTC  |
+| Papua New Guinea                           | PGK      | 3-5 business days | 7:00PM UTC  |
+| Pitcairn                                   | NZD      | 3-5 business days | 7:00PM UTC  |
+| Puerto Rico                                | USD      | 3-5 business days | 7:00PM UTC  |
+| Qatar                                      | QAR      | 3-5 business days | 7:00PM UTC  |
+| Rwanda                                     | RWF      | 3-5 business days | 7:00PM UTC  |
+| Samoa                                      | WST      | 3-5 business days | 7:00PM UTC  |
+| Sao Tome & Principe                        | STD      | 3-5 business days | 7:00PM UTC  |
+| Saudi Arabia                               | SAR      | 3-5 business days | 7:00PM UTC  |
+| Serbia                                     | RSD      | 3-5 business days | 7:00PM UTC  |
+| Seychelles                                 | SCR      | 3-5 business days | 7:00PM UTC  |
+| Sierra Leone                               | SLL      | 3-5 business days | 7:00PM UTC  |
+| Sint Maarten (Dutch part)                  | ANG      | 3-5 business days | 7:00PM UTC  |
+| Solomon Islands                            | SBD      | 3-5 business days | 7:00PM UTC  |
+| South Africa                               | ZAR      | 3-5 business days | 7:00PM UTC  |
+| South Georgia & the South Sandwich Islands | GBP      | 3-5 business days | 7:00PM UTC  |
+| Sri Lanka \*                               | LKR      | 3-5 business days | 7:00PM UTC  |
+| St Helena                                  | SHP      | 3-5 business days | 7:00PM UTC  |
+| St Kitts & Nevis                           | XCD      | 3-5 business days | 7:00PM UTC  |
+| St Lucia                                   | XCD      | 3-5 business days | 7:00PM UTC  |
+| St Vincent & the Grenadines                | XCD      | 3-5 business days | 7:00PM UTC  |
+| Suriname                                   | SRD      | 3-5 business days | 7:00PM UTC  |
+| Svalbard & Jan Mayen                       | NOK      | 3-5 business days | 7:00PM UTC  |
+| Swaziland                                  | SZL      | 3-5 business days | 7:00PM UTC  |
+| Taiwan                                     | TWD      | 3-5 business days | 7:00PM UTC  |
+| Tajikistan                                 | TJS      | 3-5 business days | 7:00PM UTC  |
+| Tanzania                                   | TZS      | 3-5 business days | 7:00PM UTC  |
+| Timor-Leste                                | USD      | 3-5 business days | 7:00PM UTC  |
+| Tokelau                                    | NZD      | 3-5 business days | 7:00PM UTC  |
+| Tonga                                      | TOP      | 3-5 business days | 7:00PM UTC  |
+| Trinidad & Tobago                          | TTD      | 3-5 business days | 7:00PM UTC  |
+| Tunisia                                    | TND      | 3-5 business days | 7:00PM UTC  |
+| Turkey                                     | TRY      | 3-4 business days | 7:00PM UTC  |
+| Turkmenistan                               | TMT      | 3-5 business days | 7:00PM UTC  |
+| Turks & Caicos Islands                     | USD      | 3-5 business days | 7:00PM UTC  |
+| Tuvalu                                     | USD      | 3-5 business days | 7:00PM UTC  |
+| Trinidad & Tobago                          | TTD      | 3-5 business days | 7:00PM UTC  |
+| Ukraine                                    | UAH, USD | 3-5 business days | 7:00PM UTC  |
+| United Arab Emirates                       | AED      | 3-5 business days | 7:00PM UTC  |
+| Uzbekistan                                 | UZS      | 3-5 business days | 7:00PM UTC  |
+| Vanuatu                                    | VUV      | 3-5 business days | 7:00PM UTC  |
+| Virgin Islands (British)                   | USD      | 3-5 business days | 7:00PM UTC  |
+| Virgin Islands (US)                        | USD      | 3-5 business days | 7:00PM UTC  |
+| Wallis & Futuna                            | XPF      | 3-5 business days | 7:00PM UTC  |
+| Zambia                                     | ZMW      | 3-5 business days | 7:00PM UTC  |
+
+### IACH (International Automated Clearing House)
+
+| Country                    | Currency | Delivery Time             | Cutoff Time |
+| -------------------------- | -------- | ------------------------- | ----------- |
+| United States              | USD      | Next business day         | 8:00PM UTC  |
+| Canada                     | CAD, USD | Same or next business day | 9:00PM UTC  |
+| United Kingdom             | GBP, EUR | Same or next business day | 7:00PM UTC  |
+| Argentina \*               | ARS      | 1-2 business days         | 7:00PM UTC  |
+| Australia                  | AUD      | 1-2 business days         | 7:00PM UTC  |
+| Austria                    | EUR      | Next business day         | 7:00PM UTC  |
+| Belgium                    | EUR      | Next business day         | 7:00PM UTC  |
+| Brazil                     | BRL      | 1-2 business days         | 7:00PM UTC  |
+| Bulgaria                   | BGN, EUR | 1-2, Next business day    | 7:00PM UTC  |
+| Chile \*                   | CLP      | 1-2 business days         | 7:00PM UTC  |
+| China \*                   | CNY, USD | 1-2, 3-5 business days    | 7:00PM UTC  |
+| Colombia \*                | COP      | 1-2 business days         | 7:00PM UTC  |
+| Croatia                    | EUR      | Next business day         | 7:00PM UTC  |
+| Cyprus                     | EUR      | Next business day         | 7:00PM UTC  |
+| Czech Republic             | CZK, EUR | 1-2, Next business day    | 7:00PM UTC  |
+| Denmark                    | DKK, EUR | 1-2, Next business day    | 7:00PM UTC  |
+| Estonia                    | EUR      | Next business day         | 7:00PM UTC  |
+| Finland                    | EUR      | Next business day         | 7:00PM UTC  |
+| France                     | EUR      | Next business day         | 7:00PM UTC  |
+| French Guiana              | EUR      | Next business day         | 7:00PM UTC  |
+| Germany                    | EUR      | Next business day         | 7:00PM UTC  |
+| Gibraltar                  | EUR, GIP | Next, 3-5 business days   | 7:00PM UTC  |
+| Greece                     | EUR      | Next business day         | 7:00PM UTC  |
+| Guadeloupe                 | EUR      | Next business days        | 7:00PM UTC  |
+| Guernsey                   | EUR, GBP | Next, 2-3 business days   | 7:00PM UTC  |
+| Hong Kong                  | HKD      | 1-2 business days         | 7:00PM UTC  |
+| Hungary                    | HUF, EUR | 1-2, Next business days   | 7:00PM UTC  |
+| Iceland                    | EUR, ISK | 1-2, 3-5 business days    | 7:00PM UTC  |
+| India                      | INR      | 1-2 business days         | 7:00PM UTC  |
+| Indonesia                  | IDR      | 1-2 business days         | 7:00PM UTC  |
+| Ireland                    | EUR      | Next business day         | 7:00PM UTC  |
+| Isle of Man                | EUR, GBP | 1-2, 3-5 business days    | 7:00PM UTC  |
+| Italy                      | EUR      | Next business day         | 7:00PM UTC  |
+| Jersey                     | EUR, GBP | Next, 3-5 business days   | 7:00PM UTC  |
+| Kenya \*                   | KES      | 1-2 business days         | 7:00PM UTC  |
+| Latvia                     | EUR      | Next business day         | 7:00PM UTC  |
+| Liechtenstein              | EUR, CHF | Next, 3-5 business days   | 7:00PM UTC  |
+| Lithuania                  | EUR      | Next business day         | 7:00PM UTC  |
+| Luxembourg                 | EUR      | Next business day         | 7:00PM UTC  |
+| Malaysia                   | MYR      | 1-2 business days         | 7:00PM UTC  |
+| Malta                      | EUR      | Next business day         | 7:00PM UTC  |
+| Martinique                 | EUR      | Next business days        | 7:00PM UTC  |
+| Mayotte                    | EUR      | Next business days        | 7:00PM UTC  |
+| Mexico \*                  | MXN      | 1-2 business days         | 7:00PM UTC  |
+| Monaco                     | EUR      | Next business day         | 7:00PM UTC  |
+| Morocco \*                 | MAD      | 1-2 business days         | 7:00PM UTC  |
+| Netherlands                | EUR      | Next business day         | 7:00PM UTC  |
+| Norway                     | NOK, EUR | 1-2, Next business day    | 7:00PM UTC  |
+| Paraguay \*                | PYG      | 1-2 business days         | 7:00PM UTC  |
+| Peru \*                    | PEN      | 1-2 business days         | 7:00PM UTC  |
+| Philippines                | PHP      | 1-2 business days         | 7:00PM UTC  |
+| Poland                     | PLN, EUR | 1-2, Next business day    | 7:00PM UTC  |
+| Portugal                   | EUR      | Next business day         | 7:00PM UTC  |
+| Reunion                    | EUR      | Next business days        | 7:00PM UTC  |
+| Romania                    | RON, EUR | 1-2, Next business day    | 7:00PM UTC  |
+| Saint Martin (French part) | EUR      | Next business day         | 7:00PM UTC  |
+| San Marino                 | EUR      | Next business day         | 7:00PM UTC  |
+| Singapore                  | SGD      | 1-2 business days         | 7:00PM UTC  |
+| Slovakia                   | EUR      | Next business day         | 7:00PM UTC  |
+| Slovenia                   | EUR      | Next business day         | 7:00PM UTC  |
+| Spain                      | EUR      | Next business day         | 7:00PM UTC  |
+| St Barthelemy              | EUR      | Next business days        | 7:00PM UTC  |
+| St Pierre & Miquelon       | EUR      | Next business day         | 7:00PM UTC  |
+| Sweden                     | SEK, EUR | 1-2, Next business day    | 7:00PM UTC  |
+| Switzerland                | CHF, EUR | 1-2, Next business days   | 7:00PM UTC  |
+| Thailand                   | THB      | 1-2 business days         | 7:00PM UTC  |
+| Uruguay \*                 | UYU      | 1-2 business days         | 7:00PM UTC  |
+| Vatican City               | EUR      | Next business day         | 7:00PM UTC  |
+| Vietnam                    | VND      | 1-2 business days         | 7:00PM UTC  |

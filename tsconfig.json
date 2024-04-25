@@ -19,7 +19,8 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "pages/guides/disputes.mdx"
+    "pages/guides/disputes.mdx",
+    "pages/guides/payout.mdx"
   ],
   "exclude": ["node_modules"]
 }

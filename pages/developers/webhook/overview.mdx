@@ -28,19 +28,17 @@ Here are several examples:
 ```ts copy
 import crypto from 'crypto';
 
-const secret = 'wh_'; // paste your secret here.
-const eventData = { event: req.body, timestamp: req.headers['X-Pandabase-Timestamp'] };
+const secret = 'wh\_'; // paste your secret here. const eventData = { event:
+req.body, timestamp: req.headers['X-Pandabase-Timestamp'] };
 
 const signature = crypto.createHmac('sha256', secret)
-      .update(JSON.stringify(eventData))
-      .digest('hex');
+.update(JSON.stringify(eventData)) .digest('hex');
 
-if (req.headers['X-Pandabase-Signature'] === signature) {
-    console.log('Valid signature. The response was sent by Pandabase.');
-} else {
-    console.log('Invalid signature.');
-};
-```
+if (req.headers['X-Pandabase-Signature'] === signature) { console.log('Valid
+signature. The response was sent by Pandabase.'); } else { console.log('Invalid
+signature.'); };
+
+````
 </Tabs.Tab>
 <Tabs.Tab>
 ```go copy
@@ -84,8 +82,9 @@ func verifyWebhook(w http.ResponseWriter, req *http.Request) {
       fmt.Println("Invalid signature")
   }
 }
-```
-<Tabs.Tab/>
+````
+
+<Tabs.Tab />
 
 </Tabs.Tab>
 
@@ -96,9 +95,9 @@ use hmac::{Hmac, Mac, NewMac};
 use sha2::Sha256;
 use std::io::Read;
 
-#[post("/")]
-async fn index(req_body: web::Bytes, timestamp: actix_web::web::Header, signature: actix_web::web::Header) -> impl Responder {
-    let secret = b"wh_"; // paste your secret here.
+#[post("/")] async fn index(req*body: web::Bytes, timestamp:
+actix_web::web::Header, signature: actix_web::web::Header) -> impl Responder {
+let secret = b"wh*"; // paste your secret here.
 
     let mut mac = Hmac::<Sha256>::new_varkey(secret).expect("HMAC can take key of any size");
     mac.update(&req_body);
@@ -111,19 +110,13 @@ async fn index(req_body: web::Bytes, timestamp: actix_web::web::Header, signatur
     } else {
         return web::HttpResponse::Unauthorized().body("Invalid signature");
     }
+
 }
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new()
-            .service(index)
-    })
-    .bind("127.0.0.1:8080")?
-    .run()
-    .await
-}
-```
+#[actix_web::main] async fn main() -> std::io::Result<()> { HttpServer::new(|| {
+App::new() .service(index) }) .bind("127.0.0.1:8080")? .run() .await }
+
+````
 </Tabs.Tab>
 
 <Tabs.Tab>
@@ -151,7 +144,8 @@ def verify_webhook():
 
 if __name__ == '__main__':
   app.run(debug=True, port=8080)
-```
+````
+
 </Tabs.Tab>
 
 <Tabs.Tab>
@@ -160,10 +154,9 @@ require 'sinatra'
 require 'openssl'
 require 'json'
 
-post '/' do 
-    secret = 'wh_' # paste your secret here.
-    timestamp = request.env['HTTP_X_Pandabase_Timestamp'] 
-    signature = request.env['HTTP_X_Pandabase_Signature']
+post '/' do secret = 'wh\_' # paste your secret here. timestamp =
+request.env['HTTP_X_Pandabase_Timestamp'] signature =
+request.env['HTTP_X_Pandabase_Signature']
 
     body = request.body.read
 
@@ -171,10 +164,12 @@ post '/' do
 
     if signature == calculated_signature
         'Valid signature. The response was sent by Pandabase.'
-    else 
-        'Invalid signature' 
-    end 
+    else
+        'Invalid signature'
+    end
+
 end
+
 ```
 </Tabs.Tab>
 </Tabs>
@@ -182,3 +177,4 @@ end
 This code calculates the HMAC signature by hashing the JSON string of the
 webhook payload using the SHA256 algorithm and the provided secret. The result
 is a hexadecimal digest.
+```

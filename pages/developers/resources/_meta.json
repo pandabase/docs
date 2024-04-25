@@ -9,5 +9,6 @@
   "team": "Team",
   "shop": "Shop",
   "transaction": "Transaction",
-  "webhook": "Webhook"
+  "webhook": "Webhook",
+  "payouts": "Payouts"
 }
