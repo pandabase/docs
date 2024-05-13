@@ -9,6 +9,26 @@ title: Changelog
 This changelog lists all additions and updates to the Pandabase API, in
 chronological order.
 
+#### May 13, 2024
+
+- Renamed `shop` route to `shops`.
+
+- Added `payout` route with support for `page` and `pageSize` parameters.
+- Introduced `recipients` route for adding payout information.
+- Enhanced `/user` object to include `flags.requirements.payouts` and `flags.requirements.kyc{status, checked_at}`.
+- Added `customer` route with support for auth tokens of types ["login", "register", "token"] (action-based auth).
+- Implemented sending of payout emails.
+- Created `documents` route for KYC-related tasks.
+- Removed `paid_at` attribute from payout object.
+- Added `recipient.compliance.status` to `/user`.
+- Successful API operations now return `OK` status instead of `SUCCESS`.
+- Supported Stripe Express accounts.
+- New health check message on `/healthcheck` route.
+- Return `image_hash` on public endpoints.
+- Added `coupon.enabled` to coupon.
+- Introduced `payments` route for payment flow creation.
+
+
 #### April 3, 2024
 
 - Updated event terminology from `transaction` to `order` object
