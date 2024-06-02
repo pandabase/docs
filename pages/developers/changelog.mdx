@@ -9,41 +9,59 @@ title: Changelog
 This changelog lists all additions and updates to the Pandabase API, in
 chronological order.
 
+#### June 6, 2024
+
+- Added
+  - `/categories` route with support for listing categories, creating, getting, deleting, and updating
+  - `categories` field to the product model
+
+- Changed
+  - Renamed the response payloads for the following endpoints:
+  - POST `/products`: The response now returns the created product in the format `{ product: { ... }` } instead of directly returning the product object.
+  - GET `/products`: The response now returns a list of products in the format `{ products: [{ ... }] }` instead of directly returning the product list.
+  - GET `/products/{id}`: The response now returns the product in the format `{ product: { ... } }` instead of directly returning the product object.
+
 #### May 13, 2024
 
-- Renamed `shop` route to `shops`.
+- Changed
+  - Renamed `shop` route to `shops`.
 
-- Added `payout` route with support for `page` and `pageSize` parameters.
-- Introduced `recipients` route for adding payout information.
-- Enhanced `/user` object to include `flags.requirements.payouts` and `flags.requirements.kyc{status, checked_at}`.
-- Added `customer` route with support for auth tokens of types ["login", "register", "token"] (action-based auth).
-- Implemented sending of payout emails.
-- Created `documents` route for KYC-related tasks.
-- Removed `paid_at` attribute from payout object.
-- Added `recipient.compliance.status` to `/user`.
-- Successful API operations now return `OK` status instead of `SUCCESS`.
-- Supported Stripe Express accounts.
-- New health check message on `/healthcheck` route.
-- Return `image_hash` on public endpoints.
-- Added `coupon.enabled` to coupon.
-- Introduced `payments` route for payment flow creation.
+- Added
+  - `payout` route with support for `page` and `pageSize` parameters.
+  - `recipients` route for adding payout information.
+  - `flags.requirements.payouts` and `flags.requirements.kyc{status, checked_at}` to the `/user` object.
+  - `customer` route with support for auth tokens of types `["login", "register", "token"]` (action-based auth).
+  - Sending of payout emails.
+  - `documents` route for KYC-related tasks.
+
+- Removed
+  - `paid_at` attribute from the payout object.
+
+- Updated
+  - `recipient.compliance.status` added to `/user`.
+  - Successful API operations now return `OK` status instead of `SUCCESS`.
+  - Supported Stripe Express accounts.
+  - New health check message on `/healthcheck` route.
+  - `image_hash` returned on public endpoints.
+  - `coupon.enabled` added to coupons.
+  - `payments` route for payment flow creation.
 
 
 #### April 3, 2024
 
-- Updated event terminology from `transaction` to `order` object
-
-  - The event type previously referred to as `transaction` has been standardized
-    as `order` object. The associated identifier now returns as `order.id`.
+- Updated
+  - Event terminology from `transaction` to `order` object
+  - The event type previously referred to as `transaction` has been standardized as `order` object. The associated identifier now returns as `order.id`.
   - Renamed all `transaction` event types to `order` for consistency.
 
-- Introduced new event types related to payments
-  - Added `payment` event type.
-  - Included new status events under `payment`:
-    - `payment.pending`: Indicates a pending payment.
-    - `payment.paid`: Denotes a successfully processed payment.
-    - `payment.success`: Signifies a successfully completed payment transaction.
-    - `payment.failed`: Indicates a failed payment transaction.
+- Added
+  - New event types related to payments
+  - `payment` event type
+  - New status events under `payment`:
+  - `payment.pending`: Indicates a pending payment.
+  - `payment.paid`: Denotes a successfully processed payment.
+  - `payment.success`: Signifies a successfully completed payment transaction.
+  - `payment.failed`: Indicates a failed payment transaction.
 
 #### March 12, 2024
 
@@ -117,11 +135,8 @@ chronological order.
 
 - Added the `analytics["dispute"]` property to the `analytics` object.
 
-#### February 20, 2024
-
+### February 20, 2024
 - General Team release
 
-#### February 15, 2024
-
-- Implemented support for `sortBy.status`, and `sortBy.date` query parameters in
-  the List Orders route.
+### February 15, 2024
+- Implemented support for `sortBy.status`, and `sortBy.date` query parameters in the List Orders route.
