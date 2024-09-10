@@ -3,13 +3,42 @@ title: "Dynamic Payments"
 description: "Learn how to utilize dynamic payments in your application."
 ---
 
-We'll make practical use of dynamic payments here so that you can use them effectively in your applications. There are 8 steps to complete to make this work in a production environment. We will use TypeScript and Node.js here but the implementation can be ported to any language.
+<Warning>
+  We will assume you have a general understanding of programming. This guide is
+  intended for developers, and we expect you to have a good understanding of
+  REST APIs in general. If you're not a developer, please skip this section.
+</Warning>
+
+We'll make practical use of dynamic payments so that you can use them effectively in your applications. There are 8 steps to complete to make this work in a production environment. We will use TypeScript and Node.js here, but the implementation can be ported to any language.
+
+A practical use case for dynamic payments is, for example, if you have a Discord server and you want to grant a user a role. In this case, you can pass in:
+
+```
+fields[{input: "discord_username", display_value: "Discord Username"}]
+```
+
+during the payment creation. This will prompt for the Discord username in the checkout process. Once the payment is made, a `payment.succeeded` webhook event is triggered. You can then receive the Discord username as `discord_username` or `fields[0].input` in the request body of the webhook and grant the user their role.
+
+This has many practical applications, for example, a site selling dynamic courses or other customizable products or services.
 
 <Steps>
-  <Step title="Set up webhook"/>
-  <Step title="Prepare backend"/>
-  <Step title="Build webhook receiver"/>
-  <Step title="Generate payment session"/>
+<Step title="Grab the secrets">
+
+Log in to your account and navigate to the "API Tokens" section. Click the "Create New Token" button. The generated API token will look similar to this: `api_tok_A7eUMjyjyMfV9G0u7YH18SozCpr1hEiU`. Copy and securely store the API token.
+
+Next in your shop, create a new webhook. The webhook secret will look like this: `whsk_GseIBNijOmcUFeI3G5OEkgfus5ZfRMZ5`. Copy and securely store the webhook secret.
+
+We are storing these two secrets as 
+```env .env
+PANDABASE_API_TOKEN="api_tok_A7eUMjyjyMfV9G0u7YH18SozCpr1hEiU"
+PANDABASE_WEBHOOK_SECRET="whsk_GseIBNijOmcUFeI3G5OEkgfus5ZfRMZ5"
+```
+in our `.env` file.
+</Step>
+
+<Step title="Prepare backend"/>
+<Step title="Build webhook receiver"/>
+  <Step title="Generate payment session">Now we will </Step>
   <Step title="Send checkout link"/>
   <Step title="Monitor payment.success event"/>
   <Step title="Grant app access"/>
