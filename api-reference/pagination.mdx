@@ -3,22 +3,64 @@ title: Pagination
 description: "Learn to use pagination to retrieve your resources."
 ---
 
-All resources that support list API methods use page-based pagination.
+All resources that use list API methods use page-based pagination.
 
-```typescript
-interface PaginationRequestQuerystring {
-  page: number;
-  page_size: number;
-}
+## Request Parameters
 
-interface MetaResponse<T> {
-  current_page: number;
-  page_size: number;
-  total_items: number;
-  total_pages: number;
-  next_page_url?: string;
-  previous_page_url?: string;
-  first_page_url: string;
-  last_page_url: string;
-}
-```
+The following query parameters should be included in the request:
+
+<ParamField query="page" type="number" default="none" required>
+  The page number to retrieve (starting from 1)
+</ParamField>
+
+<ParamField query="page_size" type="number" default="10">
+  The number of items to return per page (maximum 100)
+</ParamField>
+
+## Meta Object Properties
+
+The API response will include a `meta` object containing pagination information:
+
+<ResponseField name="current_page" type="number" required>
+  The current page number
+</ResponseField>
+
+<ResponseField name="page_size" type="number" required>
+  The number of items per page
+</ResponseField>
+
+<ResponseField name="total_items" type="number" required>
+  The total number of items across all pages
+</ResponseField>
+
+<ResponseField name="total_pages" type="number" required>
+  The total number of pages
+</ResponseField>
+
+<ResponseField name="next_page_url" type="string" optional>
+  URL for the next page (if available)
+</ResponseField>
+
+<ResponseField name="previous_page_url" type="string" optional>
+  URL for the previous page (if available)
+</ResponseField>
+
+<ResponseField name="first_page_url" type="string" required>
+  URL for the first page
+</ResponseField>
+
+<ResponseField name="last_page_url" type="string" required>
+  URL for the last page
+</ResponseField>
+
+## Best Practices
+
+1. Use `page` and `page_size` query parameters when making requests to list endpoints.
+2. Respect the maximum `page_size` limit of 100 items per page.
+3. Use the provided URLs in the meta object for navigation between pages.
+4. `next_page_url` or `previous_page_url` might be null.
+
+## Limitations
+
+- The maximum allowed `page_size` is 100 items per page.
+- If a `page_size` greater than 100 is requested, the API will return an error.
