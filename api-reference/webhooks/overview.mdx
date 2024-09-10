@@ -9,6 +9,14 @@ Pandabase webhooks can be utilized to construct real-time systems and facilitate
 payment acceptance. If you intend to provide something to a user immediately
 after a purchase, you can leverage webhook events.
 
+
+```mermaid
+flowchart LR
+    A[Customer Purchase] --> B[Pandabase Processes Payment]
+    B --> C[Pandabase Sends Webhook]
+    C --> D[Your App Receives Webhook]
+```
+
 ## Event Overview
 
 We generate event data and send it to your webhook. There are different event types as mentioned in [events](/api-reference/webhooks/events). For example, if you want updates on payments, you can use the `payment.updated` event to receive an update about the payment in your application. We automatically send this immediately once a resource is created in our system.
@@ -30,6 +38,19 @@ Here's an example:
 ### Retries
 
 We retry up to 5 times using an exponential backoff. If we receive a 200 status from your application, we mark the delivery as successful. Otherwise, if anything other than 200 is received, we try 5 times max. If it doesn't succeed after 5 attempts, we email you and mark the webhook as disabled.
+
+```mermaid
+flowchart LR
+    A[Start] --> B{Deliver}
+    B -->|200| C[Success]
+    C --> H[End]
+    B -->|!200| D{Retry < 5?}
+    D -->|Yes| E[Backoff]
+    E --> B
+    D -->|No| F[Disable]
+    F --> G[Email]
+    G --> H
+```
 
 ## Verification
 

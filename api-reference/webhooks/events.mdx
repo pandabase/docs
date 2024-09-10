@@ -5,132 +5,259 @@ description: "Types of possible events that Pandabase can send to your applicati
 
 This is a list of all the types of events we currently send.
 
-The pattern we follow is `resource.event`.
+## Webhook structure
+
+Each event contains a `data` object with details about the event. The structure of this object depends on the event type. For example, `order.created` events will have an `order` object in the `data` field, while `payment.succeeded` events will have a `payment` object.
+
+<CodeGroup>
+
+```json Example Event
+{
+  "type": "order.completed",
+  "webhook_id": "wh_6f9a8b7c5d4e3f2a1b",
+  "data": {
+    "order": {
+      "id": "ord_20230915082347",
+      "status": "COMPLETED",
+      "amount": "179.99",
+      "currency": "USD",
+      "delivery_time": "instant",
+      "cart": {
+        "id": "crt_3e2d1c0b9a8f7e6d",
+        "line_items": [
+          {
+            "id": "prd_6d4c3b25d4c3b2",
+            "price": "199.99",
+            "quantity": 1
+          }
+        ]
+      },
+      "customer": {
+        "email": "emily.johnson@example.com",
+        "billing_address": {
+          "line1": "742 Evergreen Terrace",
+          "line2": "",
+          "city": "Springfield",
+          "region": "OR",
+          "postal_code": "97477",
+          "country": "US"
+        },
+        "geocoding": {
+          "ip": "203.0.113.42",
+          "distance_between_ip_and_billing": "12.7",
+          "address": {
+            "city": "Eugene",
+            "region": "OR",
+            "postal_code": "97401",
+            "country": "US"
+          }
+        }
+      },
+      "payment_details": {
+        "id": "py_9h8g7f6e5d4c3b2a1",
+        "status": "PAID",
+        "method": "applepay",
+        "dynamic": false,
+        "currency": "USD",
+        "breakdown": {
+          "subtotal": "199.99",
+          "discount": "-20.00",
+          "total_amount": "179.99",
+          "payment_processor_fees": "5.22",
+          "application_fee": "8.99",
+          "taxes": "14.40",
+          "settled_amount": "151.38"
+        },
+        "receipt_url": "https://receipts.pandabase.io/r_5k4j3h2g1f0e9d8c7"
+      },
+      "discount": {
+        "applied": true,
+        "code": "NEWYEAR2024"
+      }
+    }
+  }
+}
+```
+
+```typescript Type Definition
+type EventType =
+  | 'order.created'
+  | 'order.updated'
+  | 'order.completed'
+  | 'order.cancelled'
+  | 'order.refunded'
+  | 'payment.created'
+  | 'payment.updated'
+  | 'payment.succeeded'
+  | 'payment.failed'
+  | 'payment.refunded'
+  | 'payment.pending'
+  | 'dispute.created'
+  | 'dispute.updated'
+  | 'dispute.won'
+  | 'dispute.lost'
+  | 'subscription.created'
+  | 'subscription.updated'
+  | 'subscription.cancelled'
+  | 'subscription.trial_started'
+  | 'subscription.trial_ended'
+  | 'subscription.renewed'
+  | 'subscription.paused'
+  | 'subscription.resumed'
+  | 'invoice.created'
+  | 'invoice.updated'
+  | 'invoice.paid'
+  | 'invoice.payment_failed'
+  | 'invoice.sent'
+  | 'invoice.voided'
+  | 'invoice.finalized'
+  | 'invoice.marked_uncollectible'
+  | 'invoice.deleted';
 
-- `order.created`: `data` is an `order`
+type WebhookPayload<T extends EventType, D> = {
+  type: T;
+  webhook_id: string;
+  data: D;
+};
+```
 
- Triggered when a new order is created in the system.
+</CodeGroup>
 
-- `order.updated`: `data` is an `order`
 
- Fired when an existing order's details are modified.
+## Order events
 
-- `order.completed`: `data` is an `order`
+### `order.created`
 
- Occurs when an order is fulfilled and marked as complete.
+Occurs when a new order is created.
 
-- `order.cancelled`: `data` is an `order`
+### `order.updated`
 
- Triggered when an order is cancelled before completion.
+Occurs when an order is updated.
 
-- `order.refunded`: `data` is an `order`
+### `order.completed`
 
- Fired when a refund is issued for an order.
+Occurs when an order is marked as completed.
 
-- `payment.created`: `data` is a `payment`
+### `order.cancelled`
 
- Occurs when a new payment is initiated.
+Occurs when an order is cancelled.
 
-- `payment.updated`: `data` is a `payment`
+### `order.refunded`
 
- Triggered when an existing payment's details are modified.
+Occurs when an order is refunded.
 
-- `payment.succeeded`: `data` is a `payment`
+## Payment events
 
- Fired when a payment is successfully processed.
+### `payment.created`
 
-- `payment.failed`: `data` is a `payment`
+Occurs when a new payment is created.
 
- Occurs when a payment attempt fails.
+### `payment.updated`
 
-- `payment.refunded`: `data` is a `payment`
+Occurs when a payment is updated.
 
- Triggered when a payment is refunded, either partially or fully.
+### `payment.succeeded`
 
-- `payment.pending`: `data` is a `payment`
+Occurs when a payment is successful.
 
- Fired when a payment is awaiting processing or confirmation.
+### `payment.failed`
 
-- `dispute.created`: `data` is a `dispute`
+Occurs when a payment fails.
 
- Occurs when a new dispute or chargeback is initiated.
+### `payment.refunded`
 
-- `dispute.updated`: `data` is a `dispute`
+Occurs when a payment is refunded.
 
- Triggered when the status or details of a dispute are updated.
+### `payment.pending`
 
-- `dispute.won`: `data` is a `dispute`
+Occurs when a payment is pending.
 
- Fired when a dispute is resolved in the merchant's favor.
+## Dispute events
 
-- `dispute.lost`: `data` is a `dispute`
+### `dispute.created`
 
- Occurs when a dispute is resolved in the customer's favor.
+Occurs when a new dispute is created.
 
-- `subscription.created`: `data` is a `subscription`
+### `dispute.updated`
 
- Triggered when a new subscription is created.
+Occurs when a dispute is updated.
 
-- `subscription.updated`: `data` is a `subscription`
+### `dispute.won`
 
- Fired when an existing subscription's details are modified.
+Occurs when a dispute is resolved in your favor.
 
-- `subscription.cancelled`: `data` is a `subscription`
+### `dispute.lost`
 
- Occurs when a subscription is cancelled.
+Occurs when a dispute is resolved in the customer's favor.
 
-- `subscription.trial_started`: `data` is a `subscription`
+## Subscription events
 
- Triggered when a subscription's trial period begins.
+### `subscription.created`
 
-- `subscription.trial_ended`: `data` is a `subscription`
+Occurs when a new subscription is created.
 
- Fired when a subscription's trial period concludes.
+### `subscription.updated`
 
-- `subscription.renewed`: `data` is a `subscription`
+Occurs when a subscription is updated.
 
- Occurs when a subscription is automatically renewed for a new period.
+### `subscription.cancelled`
 
-- `subscription.paused`: `data` is a `subscription`
+Occurs when a subscription is cancelled.
 
- Triggered when a subscription is temporarily paused.
+### `subscription.trial_started`
 
-- `subscription.resumed`: `data` is a `subscription`
+Occurs when a subscription trial starts.
 
- Fired when a paused subscription is reactivated.
+### `subscription.trial_ended`
 
-- `invoice.created`: `data` is an `invoice`
+Occurs when a subscription trial ends.
 
- Occurs when a new invoice is generated.
+### `subscription.renewed`
 
-- `invoice.updated`: `data` is an `invoice`
+Occurs when a subscription renews.
 
- Triggered when an existing invoice's details are modified.
+### `subscription.paused`
 
-- `invoice.paid`: `data` is an `invoice`
+Occurs when a subscription is paused.
 
- Fired when an invoice is marked as paid.
+### `subscription.resumed`
 
-- `invoice.payment_failed`: `data` is an `invoice`
+Occurs when a paused subscription is resumed.
 
- Occurs when a payment attempt for an invoice fails.
+## Invoice events
 
-- `invoice.sent`: `data` is an `invoice`
+### `invoice.created`
 
- Triggered when an invoice is sent to the customer.
+Occurs when a new invoice is created.
 
-- `invoice.voided`: `data` is an `invoice`
+### `invoice.updated`
 
- Fired when an invoice is voided and is no longer valid.
+Occurs when an invoice is updated.
 
-- `invoice.finalized`: `data` is an `invoice`
+### `invoice.paid`
 
- Occurs when an invoice is finalized and can no longer be modified.
+Occurs when an invoice is paid.
 
-- `invoice.marked_uncollectible`: `data` is an `invoice`
+### `invoice.payment_failed`
 
- Triggered when an invoice is marked as uncollectible.
+Occurs when an invoice payment attempt fails.
 
-- `invoice.deleted`: `data` is an `invoice`
+### `invoice.sent`
 
- Fired when an invoice is deleted from the system.
+Occurs when an invoice is sent to a customer.
+
+### `invoice.voided`
+
+Occurs when an invoice is voided.
+
+### `invoice.finalized`
+
+Occurs when an invoice is finalized.
+
+### `invoice.marked_uncollectible`
+
+Occurs when an invoice is marked as uncollectible.
+
+### `invoice.deleted`
+
+Occurs when an invoice is deleted.

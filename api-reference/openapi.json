@@ -99,7 +99,7 @@
     },
     {
       "name": "Public",
-      "description": "Public endpoints are the building blocks for creating your own custom storefront theme with any stack you prefer. We also utilize the Public API behind the scenes there’s no hidden magic."
+      "description": "Public endpoints are the building blocks for creating your own custom storefront theme with any stack you prefer. We also utilize the Public API behind the scenes theres no hidden magic."
     }
   ],
   "paths": {
