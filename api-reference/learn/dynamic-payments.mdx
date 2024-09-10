@@ -28,19 +28,49 @@ Log in to your account and navigate to the "API Tokens" section. Click the "Crea
 
 Next in your shop, create a new webhook. The webhook secret will look like this: `whsk_GseIBNijOmcUFeI3G5OEkgfus5ZfRMZ5`. Copy and securely store the webhook secret.
 
-We are storing these two secrets as 
+We are storing these two secrets as
+
 ```env .env
 PANDABASE_API_TOKEN="api_tok_A7eUMjyjyMfV9G0u7YH18SozCpr1hEiU"
 PANDABASE_WEBHOOK_SECRET="whsk_GseIBNijOmcUFeI3G5OEkgfus5ZfRMZ5"
 ```
+
 in our `.env` file.
+
 </Step>
 
 <Step title="Prepare backend"/>
 <Step title="Build webhook receiver"/>
-  <Step title="Generate payment session"/>
+  <Step title="Generate payment session">
+  ```json data.json
+{
+	"dynamic": true,
+	"amount": 1500,
+	"currency": "USD",
+	"description": "Premium access to Turtle Bot",
+	"extra_params": {
+		"default_values": {
+			"full_name": "",
+			"email": ""
+		},
+		"fields": [
+			{
+				"type": "input",
+				"name": "username",
+				"display_name": "Your Username"
+			}
+		]
+	},
+	"return_url": "",
+	"cancel_url": "",
+	"tax_enabled": true
+}
+
+```
+  </Step>
   <Step title="Send checkout link"/>
   <Step title="Monitor payment.success event"/>
   <Step title="Grant app access"/>
   <Step title="Check dashboard"/>
 </Steps>
+```

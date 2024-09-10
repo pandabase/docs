@@ -1,0 +1,24 @@
+---
+title: Pagination
+description: "Learn to use pagination to retrieve your resources."
+---
+
+All resources that support list API methods use page-based pagination.
+
+```typescript
+interface PaginationRequestQuerystring {
+  page: number;
+  page_size: number;
+}
+
+interface MetaResponse<T> {
+  current_page: number;
+  page_size: number;
+  total_items: number;
+  total_pages: number;
+  next_page_url?: string;
+  previous_page_url?: string;
+  first_page_url: string;
+  last_page_url: string;
+}
+```

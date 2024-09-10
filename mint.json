@@ -59,7 +59,11 @@
     },
     {
       "group": "Developers",
-      "pages": ["api-reference/introduction", "api-reference/changelog"]
+      "pages": [
+        "api-reference/introduction",
+        "api-reference/pagination",
+        "api-reference/changelog"
+      ]
     },
     {
       "group": "Learn",
