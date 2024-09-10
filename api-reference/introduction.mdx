@@ -13,7 +13,7 @@ You can use the commands listed below with `curl` by providing your token.
 
 ## API Basics
 
-Our API is exposed as an `HTTP/1.1` and `HTTP/`2 service over TLS. All endpoints live
+Our API is exposed as an `HTTP/1.1` and `HTTP/2` service over TLS. All endpoints live
 under the URL `https://api.pandabase.io` and generally follow the REST
 architecture.
 
@@ -38,26 +38,9 @@ account session tokens can be used, they are not recommended due to security rea
   Authorization: Bearer <api_key>
 ```
 
-### Errors
-
-All API endpoints follow a consistent format for error responses to ensure clear communication.
-
-The error response structure consists of the following fields:
-
-```json
-{
-  "statusCode": number,
-  "message": string,
-  "error": string
-}
-```
-
-Message fields is designed to not contain sensitive information, and can be
-safely passed down to user interfaces.
-
 ### Versioning
 
-We include the current version information in the `API-Version` response header.
+We include the current version information in the `Pandabase-Version` response header.
 Our API versioning follows a date-based structure in the format of `YYYY/MM/DD`.
 
 ### Request IDs
@@ -67,12 +50,3 @@ tracking and troubleshooting. This identifier can be found in the response
 headers under `X-Request-Id`. In the rare event if you encounter an issue with
 our service, providing this request identifier to our support team will expedite
 the resolution process.
-
-### Idempotency
-
-We use idempotency for safely retrying requests. When creating or updating an object, use an idempotency key. Then, if a connection error occurs, you can safely repeat the request without the risk of creating a second object or performing the update twice.
-
-To perform an idempotent request, provide an additional `Idempotency-Key` header in the request.
-We suggest using V4 UUIDs to generate idempotency keys as they need to be unique to avoid collisions. Keys can be up to 256 characters long.
-
-The system automatically removes the keys after 24 hours. Only `POST`, `PUT`, `PATCH` requests support idempotency.

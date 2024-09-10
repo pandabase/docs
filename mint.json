@@ -63,6 +63,7 @@
         "api-reference/introduction",
         "api-reference/pagination",
         "api-reference/rate-limits",
+        "api-reference/idempotency",
         "api-reference/errors",
         "api-reference/changelog"
       ]
