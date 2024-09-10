@@ -288,7 +288,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "statusCode": 200,
+                  "status_code": 200,
                   "message": "OK",
                   "payload": {}
                 }
@@ -449,7 +449,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "statusCode": 409,
+                  "status_code": 409,
                   "message": "A user with the same \"username\" already exists.",
                   "error": "CONFLICT"
                 }
@@ -651,7 +651,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "statusCode": 400,
+                  "status_code": 400,
                   "message": "The phone number you've provided is invalid.",
                   "error": "BAD_REQUEST"
                 }
@@ -1238,7 +1238,7 @@
             "example": "1"
           },
           {
-            "name": "filterBy.status",
+            "name": "filter.status",
             "in": "query",
             "schema": {
               "type": "string"
@@ -2889,7 +2889,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "statusCode": 200,
+                  "status_code": 200,
                   "message": "OK",
                   "payload": {
                     "shop": {
@@ -3080,7 +3080,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "statusCode": 200,
+                  "status_code": 200,
                   "message": "OK",
                   "payload": {
                     "categories": [
@@ -3122,7 +3122,7 @@
             "example": "10"
           },
           {
-            "name": "filterBy.price",
+            "name": "filter.price",
             "in": "query",
             "schema": {
               "type": "integer"
@@ -3130,14 +3130,14 @@
             "example": "5000"
           },
           {
-            "name": "filterBy.categories",
+            "name": "filter.categories",
             "in": "query",
             "schema": {
               "type": "string"
             }
           },
           {
-            "name": "filterBy.type",
+            "name": "filter.type",
             "in": "query",
             "schema": {
               "type": "string"
@@ -3309,7 +3309,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "statusCode": 200,
+                  "status_code": 200,
                   "message": "OK",
                   "payload": {
                     "products": [
@@ -3560,7 +3560,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "statusCode": 200,
+                  "status_code": 200,
                   "message": "OK",
                   "payload": {
                     "product": {
@@ -3789,7 +3789,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "statusCode": 200,
+                  "status_code": 200,
                   "message": "OK",
                   "payload": {
                     "product": {
@@ -4001,7 +4001,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "statusCode": 200,
+                  "status_code": 200,
                   "message": "OK",
                   "payload": {
                     "products": [
