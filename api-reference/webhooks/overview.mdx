@@ -11,7 +11,7 @@ after a purchase, you can leverage webhook events.
 
 ## Event Overview
 
-We generate event data and send it to your webhook. There are different event types as mentioned in [events](/api-reference/webhooks/events.mdx). For example, if you want updates on payments, you can use the `payment.updated` event to receive an update about the payment in your application. We automatically send this immediately once a resource is created in our system.
+We generate event data and send it to your webhook. There are different event types as mentioned in [events](/api-reference/webhooks/events). For example, if you want updates on payments, you can use the `payment.updated` event to receive an update about the payment in your application. We automatically send this immediately once a resource is created in our system.
 
 ### The event object payload
 
@@ -47,21 +47,22 @@ Here are several examples:
 
 ```typescript TypeScript
 import crypto from "crypto";
-import { Request, Response } from 'express';
+import { Request, Response } from "express";
 
-const secret = 'wh_';
+const secret = "wh_";
 
 function validateSignature(req: Request, res: Response) {
-  const signature = crypto.createHmac('sha256', secret)
+  const signature = crypto
+    .createHmac("sha256", secret)
     .update(JSON.stringify(req.body))
-    .digest('hex');
+    .digest("hex");
 
-  if (req.headers['x-pandabase-signature'] === signature) {
-    console.log('Valid signature. The response was sent by Pandabase.');
-    res.status(200).send('Request processed');
+  if (req.headers["x-pandabase-signature"] === signature) {
+    console.log("Valid signature. The response was sent by Pandabase.");
+    res.status(200).send("Request processed");
   } else {
-    console.log('Invalid signature.');
-    res.status(401).send('Invalid signature');
+    console.log("Invalid signature.");
+    res.status(401).send("Invalid signature");
   }
 }
 ```
@@ -171,7 +172,6 @@ async fn main() -> std::io::Result<()> {
 ```
 
 </CodeGroup>
-
 
 This code calculates the HMAC signature by hashing the JSON string of the
 webhook payload using the SHA256 algorithm and the provided secret. The result
