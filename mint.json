@@ -43,7 +43,10 @@
   "navigation": [
     {
       "group": "Get Started",
-      "pages": ["introduction", "quickstart"]
+      "pages": [
+        "introduction",
+        "quickstart"
+      ]
     },
     {
       "group": "The Guide",
@@ -70,7 +73,9 @@
     },
     {
       "group": "Learn",
-      "pages": ["api-reference/learn/dynamic-payments"]
+      "pages": [
+        "api-reference/learn/dynamic-payments"
+      ]
     },
     {
       "group": "Webhooks",
@@ -82,112 +87,6 @@
     {
       "group": "Resources",
       "pages": [
-        {
-          "group": "Users",
-          "pages": [
-            "api-reference/resources/users/retrieve-user",
-            "api-reference/resources/users/update-user",
-            "api-reference/resources/users/confirm-update-user"
-          ]
-        },
-        {
-          "group": "Tokens",
-          "pages": [
-            "api-reference/resources/tokens/list-all-tokens",
-            "api-reference/resources/tokens/purge-tokens",
-            "api-reference/resources/tokens/get-token",
-            "api-reference/resources/tokens/delete-token"
-          ]
-        },
-        {
-          "group": "Payouts",
-          "pages": [
-            "api-reference/resources/payouts/get-payout-information",
-            "api-reference/resources/payouts/list-payouts",
-            "api-reference/resources/payouts/create-payout"
-          ]
-        },
-        {
-          "group": "Analytics",
-          "pages": [
-            "api-reference/resources/analytics/get-combined-analytics",
-            "api-reference/resources/analytics/get-shop-analytics"
-          ]
-        },
-        {
-          "group": "Shops",
-          "pages": [
-            "api-reference/resources/shops/list-shops",
-            "api-reference/resources/shops/create-shop",
-            "api-reference/resources/shops/get-shop",
-            "api-reference/resources/shops/delete-shop",
-            "api-reference/resources/shops/update-shop"
-          ]
-        },
-        {
-          "group": "Products",
-          "pages": [
-            "api-reference/resources/products/get-product",
-            "api-reference/resources/products/delete-product",
-            "api-reference/resources/products/list-products",
-            "api-reference/resources/products/update-product",
-            "api-reference/resources/products/create-product"
-          ]
-        },
-        {
-          "group": "Categories",
-          "pages": [
-            "api-reference/resources/categories/list-categories",
-            "api-reference/resources/categories/create-category",
-            "api-reference/resources/categories/get-category",
-            "api-reference/resources/categories/delete-category",
-            "api-reference/resources/categories/create-category-1"
-          ]
-        },
-        {
-          "group": "Refunds",
-          "pages": [
-            "api-reference/resources/refunds/retrieve-refund",
-            "api-reference/resources/refunds/create-refund",
-            "api-reference/resources/refunds/list-refunds"
-          ]
-        },
-        {
-          "group": "Disputes",
-          "pages": [
-            "api-reference/resources/disputes/list-all-disputes",
-            "api-reference/resources/disputes/retrieve-dispute",
-            "api-reference/resources/disputes/update-dispute"
-          ]
-        },
-        {
-          "group": "Carts",
-          "pages": [
-            "api-reference/resources/carts/get-cart",
-            "api-reference/resources/carts/abandon-cart",
-            "api-reference/resources/carts/update-cart",
-            "api-reference/resources/carts/create-cart"
-          ]
-        },
-        {
-          "group": "Team",
-          "pages": [
-            "api-reference/resources/team/list-members",
-            "api-reference/resources/team/invite-member",
-            "api-reference/resources/team/remove-member",
-            "api-reference/resources/team/update-member"
-          ]
-        },
-        {
-          "group": "Webhooks",
-          "pages": [
-            "api-reference/resources/webhooks/list-webhooks",
-            "api-reference/resources/webhooks/create-webhook",
-            "api-reference/resources/webhooks/update-webhook",
-            "api-reference/resources/webhooks/retrieve-webhook",
-            "api-reference/resources/webhooks/delete-webhook"
-          ]
-        },
         {
           "group": "Public",
           "pages": [
