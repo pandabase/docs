@@ -1,0 +1,34 @@
+---
+title: "Rate limits"
+description: "Learn about API rate limits and how to work with them."
+---
+
+## Overview
+
+To ensure fair usage and maintain the stability of our API, we have implemented two types of rate limiters:
+
+1. Global IP-based limiter
+2. Account-based rate limiter
+
+We provide fair rate limits that are designed to ensure the needs of our users. These limits are set at levels that are typically very difficult to exceed during normal usage.
+
+The account-based rate limiter is typically more strict and dynamic compared to the global one. However, even these limits are set at levels that most users will find more than enough for their needs. Due to the potential for changes in our rate limits over time, we strongly recommend implementing a retry algorithm.
+
+## Rate Limit Headers
+
+All API responses include the following headers to help you manage your request rate:
+
+| Header                  | Description                                                                  |
+|-------------------------|------------------------------------------------------------------------------|
+| `X-Ratelimit-Limit`     | The maximum number of requests permitted within the current rate limit window. |
+| `X-Ratelimit-Remaining` | The number of requests remaining in the current rate limit window.           |
+| `X-Ratelimit-Reset`     | The time at which the current rate limit window resets (UTC epoch seconds).  |
+
+## Rate Limit Variations
+
+Be aware that rate limits may vary:
+
+- Different endpoints have different rate limits.
+- Rate limits can change over time as we change our system.
+
+Always rely on the headers returned in the response to determine your current rate limit status.

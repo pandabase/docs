@@ -60,17 +60,6 @@ safely passed down to user interfaces.
 We include the current version information in the `API-Version` response header.
 Our API versioning follows a date-based structure in the format of `YYYY/MM/DD`.
 
-### Rate Limits
-
-We limit the number of calls you can make over a certain period of time. Rate
-limits vary and are specified by the following header in all responses:
-
-| Header                  | Description                                                                  |
-| ----------------------- | ---------------------------------------------------------------------------- |
-| `X-Ratelimit-Limit`     | The maximum number of requests that the consumer is permitted to make.       |
-| `X-Ratelimit-Remaining` | The number of requests remaining in the current rate limit window.           |
-| `X-Ratelimit-Reset`     | The time at which the current rate limit window resets in UTC epoch seconds. |
-
 ### Request IDs
 
 Every API request you make is assigned a unique request identifier for easy

@@ -62,6 +62,8 @@
       "pages": [
         "api-reference/introduction",
         "api-reference/pagination",
+        "api-reference/rate-limits",
+        "api-reference/errors",
         "api-reference/changelog"
       ]
     },
