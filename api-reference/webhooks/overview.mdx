@@ -5,10 +5,9 @@ description: "Listen to events in your Pandabase shop on your endpoint so that y
 
 ## Why should I use webhooks?
 
-Pandabase webhooks can be utilized to construct real-time systems and facilitate
+Pandabase webhooks can help you build real-time systems and facilitate
 payment acceptance. If you intend to provide something to a user immediately
 after a purchase, you can leverage webhook events.
-
 
 ```mermaid
 flowchart LR
@@ -37,7 +36,7 @@ Here's an example:
 
 ### Retries
 
-We retry up to 5 times using an exponential backoff. If we receive a 200 status from your application, we mark the delivery as successful. Otherwise, if anything other than 200 is received, we try 5 times max. If it doesn't succeed after 5 attempts, we email you and mark the webhook as disabled.
+We retry up to 5 times, with each attempt delayed using an exponential backoff. If we receive a 200 status from your application, we mark the delivery as successful. Otherwise, if anything other than 200 is received, we try 5 times max. If it doesn't succeed after 5 attempts, we email you and mark the webhook as disabled.
 
 ```mermaid
 flowchart LR
@@ -54,13 +53,13 @@ flowchart LR
 
 ## Verification
 
-For additional safety, it is essential to always verify webhooks.
+To ensure security, always verify webhooks.
 
 Webhooks can be verified to ensure they were actually sent by Pandabase and not
 by a malicious entity.
 
 To verify a webhook, you will need your webhook secret or token to confirm the
-SHA256 HMAC signature. Check the `X-Pandabase-Signature` header in the webhook response headers.
+`SHA256` HMAC signature. Check the `X-Pandabase-Signature` header in the webhook response headers.
 
 Here are several examples:
 

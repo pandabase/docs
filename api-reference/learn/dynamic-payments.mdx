@@ -4,10 +4,12 @@ description: "Learn how to utilize dynamic payments in your application."
 ---
 
 <Warning>
-  We will assume you have a general understanding of programming. This guide is intended for developers, and we expect you to have a good understanding of REST APIs in general. If you're not a developer, please skip this section.
+  We will assume you have a general understanding of programming. This guide is
+  intended for developers, and we expect you to have a good understanding of
+  REST APIs in general. If you're not a developer, please skip this section.
 </Warning>
 
-We'll make practical use of dynamic payments so that you can use them effectively in your applications. There are 8 steps to complete to make this work in a production environment. We will use TypeScript and Node.js here, but the implementation can be ported to any language.
+We'll make practical use of dynamic payments so that you can use them effectively in your applications. There are 8 steps required to make this work. We will use TypeScript and Node.js here, but the implementation can be ported to any language.
 
 A practical use case for dynamic payments is, for example, if you have a Discord server and you want to grant a user a role. In this case, you can pass in:
 
@@ -51,8 +53,8 @@ npx tsc --init
 Create a `src` folder and add an `index.ts` file:
 
 ```typescript
-import express from 'express';
-import dotenv from 'dotenv';
+import express from "express";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -73,11 +75,15 @@ app.listen(PORT, () => {
 Add a route to receive webhooks and verify the signature:
 
 ```typescript
-import crypto from 'crypto';
+import crypto from "crypto";
 
 // ... prev code
 
-function validateSignature(req: express.Request, res: express.Response, next: express.NextFunction) {
+function validateSignature(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) {
   const signature = crypto
     .createHmac("sha256", process.env.PANDABASE_WEBHOOK_SECRET!)
     .update(JSON.stringify(req.body))
@@ -90,12 +96,12 @@ function validateSignature(req: express.Request, res: express.Response, next: ex
   }
 }
 
-app.post('/webhook', validateSignature, (req, res) => {
+app.post("/webhook", validateSignature, (req, res) => {
   const event = req.body;
-  
-  if (event.type === 'payment.succeeded') {
+
+  if (event.type === "payment.succeeded") {
     // handle successful payment
-    console.log('Payment succeeded:', event.data);
+    console.log("Payment succeeded:", event.data);
     // implement your logic here (e.g., granting access)
   }
 
@@ -110,15 +116,18 @@ app.post('/webhook', validateSignature, (req, res) => {
 Create a function to generate a payment session:
 
 ```typescript
-async function createPaymentSession(amount: number, username: string): Promise<string> {
+async function createPaymentSession(
+  amount: number,
+  username: string
+): Promise<string> {
   try {
     const response = await fetch(
       `https://api.pandabase.io/${process.env.PANDABASE_SHOP_ID}/shop_id/payments`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${process.env.PANDABASE_API_TOKEN}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${process.env.PANDABASE_API_TOKEN}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           dynamic: true,
@@ -128,20 +137,20 @@ async function createPaymentSession(amount: number, username: string): Promise<s
           extra_params: {
             default_values: {
               full_name: "",
-              email: ""
+              email: "",
             },
             fields: [
               {
                 type: "input",
                 name: "username",
-                display_name: "Your Username"
-              }
-            ]
+                display_name: "Your Username",
+              },
+            ],
           },
           return_url: "https://your-site.com/success",
           cancel_url: "https://your-site.com/cancel",
-          tax_enabled: true
-        })
+          tax_enabled: true,
+        }),
       }
     );
 
@@ -152,7 +161,7 @@ async function createPaymentSession(amount: number, username: string): Promise<s
     const data = await response.json();
     return data.payload.checkout_url;
   } catch (error) {
-    console.error('Error creating payment session:', error);
+    console.error("Error creating payment session:", error);
     throw error;
   }
 }
@@ -165,13 +174,13 @@ async function createPaymentSession(amount: number, username: string): Promise<s
 Create an endpoint to initiate the payment process:
 
 ```typescript
-app.post('/create-payment', async (req, res) => {
+app.post("/create-payment", async (req, res) => {
   try {
     const { amount, username } = req.body;
     const checkoutUrl = await createPaymentSession(amount, username);
     res.json({ checkoutUrl });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to create payment session' });
+    res.status(500).json({ error: "Failed to create payment session" });
   }
 });
 ```
@@ -189,12 +198,12 @@ The webhook receiver we set up in Step 3 will handle the `payment.succeeded` eve
 In the webhook handler, implement the logic to grant access based on the username:
 
 ```typescript
-app.post('/webhook', validateSignature, (req, res) => {
+app.post("/webhook", validateSignature, (req, res) => {
   const event = req.body;
-  
-  if (event.type === 'payment.succeeded') {
+
+  if (event.type === "payment.succeeded") {
     const username = event.data.payment.fields[0].input; // username
-	const id = event.data.payment.id; // payment id
+    const id = event.data.payment.id; // payment id
 
     grantAccess(username, id);
   }

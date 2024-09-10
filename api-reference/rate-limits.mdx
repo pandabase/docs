@@ -10,19 +10,19 @@ To ensure fair usage and maintain the stability of our API, we have implemented 
 1. Global IP-based limiter
 2. Account-based rate limiter
 
-We provide fair rate limits that are designed to ensure the needs of our users. These limits are set at levels that are typically very difficult to exceed during normal usage.
+We provide fair rate limits designed to meet the needs of our users. These limits are set at levels that are typically very difficult to exceed during normal usage.
 
-The account-based rate limiter is typically more strict and dynamic compared to the global one. However, even these limits are set at levels that most users will find more than enough for their needs. Due to the potential for changes in our rate limits over time, we strongly recommend implementing a retry algorithm.
+The account-based rate limiter is generally stricter and more dynamic than the global one. However, even these limits are set at levels that most users will find more than enough for their needs. Due to the potential for changes in our rate limits over time, we strongly recommend implementing a retry algorithm.
 
 ## Rate Limit Headers
 
 All API responses include the following headers to help you manage your request rate:
 
-| Header                  | Description                                                                  |
-|-------------------------|------------------------------------------------------------------------------|
+| Header                  | Description                                                                    |
+| ----------------------- | ------------------------------------------------------------------------------ |
 | `X-Ratelimit-Limit`     | The maximum number of requests permitted within the current rate limit window. |
-| `X-Ratelimit-Remaining` | The number of requests remaining in the current rate limit window.           |
-| `X-Ratelimit-Reset`     | The time at which the current rate limit window resets (UTC epoch seconds).  |
+| `X-Ratelimit-Remaining` | The number of requests remaining in the current rate limit window.             |
+| `X-Ratelimit-Reset`     | The time at which the current rate limit window resets (UTC epoch seconds).    |
 
 ## Rate Limit Variations
 
