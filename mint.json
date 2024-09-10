@@ -1,0 +1,192 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Pandabase",
+  "logo": {
+    "dark": "/logo/dark.png",
+    "light": "/logo/light.png"
+  },
+  "theme": "quill",
+  "layout": "sidenav",
+  "background": {
+    "style": "gradient"
+  },
+  "sidebar": {
+    "items": "card"
+  },
+  "rounded": "default",
+  "favicon": "/logo/pandabase.png",
+  "colors": {
+    "primary": "#10ad49",
+    "light": "#10ad49",
+    "dark": "#10ad49",
+    "anchors": {
+      "from": "#0D9373",
+      "to": "#07C983"
+    }
+  },
+  "topbarCtaButton": {
+    "type": "link",
+    "name": "Start selling",
+    "url": "https://pandabase.io"
+  },
+  "tabs": [
+    {
+      "name": "Changelog",
+      "url": "changelog"
+    },
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Get Started",
+      "pages": [
+        "introduction",
+        "quickstart"
+      ]
+    },
+    {
+      "group": "Developers",
+      "pages": [
+        "api-reference/introduction",
+        "api-reference/changelog"
+      ]
+    },
+    {
+      "group": "Webhooks",
+      "pages": [
+        "api-reference/webhooks/overview",
+        "api-reference/webhooks/events"
+      ]
+    },
+    {
+      "group": "HTTP Endpoints",
+      "pages": [
+        {
+          "group": "Users",
+          "pages": [
+            "api-reference/endpoints/users/retrieve-user",
+            "api-reference/endpoints/users/update-user",
+            "api-reference/endpoints/users/confirm-update-user"
+          ]
+        },
+        {
+          "group": "Tokens",
+          "pages": [
+            "api-reference/endpoints/tokens/list-all-tokens",
+            "api-reference/endpoints/tokens/purge-tokens",
+            "api-reference/endpoints/tokens/get-token",
+            "api-reference/endpoints/tokens/delete-token"
+          ]
+        },
+        {
+          "group": "Payouts",
+          "pages": [
+            "api-reference/endpoints/payouts/get-payout-information",
+            "api-reference/endpoints/payouts/list-payouts",
+            "api-reference/endpoints/payouts/create-payout"
+          ]
+        },
+        {
+          "group": "Analytics",
+          "pages": [
+            "api-reference/endpoints/analytics/get-combined-analytics",
+            "api-reference/endpoints/analytics/get-shop-analytics"
+          ]
+        },
+        {
+          "group": "Shops",
+          "pages": [
+            "api-reference/endpoints/shops/list-shops",
+            "api-reference/endpoints/shops/create-shop",
+            "api-reference/endpoints/shops/get-shop",
+            "api-reference/endpoints/shops/delete-shop",
+            "api-reference/endpoints/shops/update-shop"
+          ]
+        },
+        {
+          "group": "Products",
+          "pages": [
+            "api-reference/endpoints/products/get-product",
+            "api-reference/endpoints/products/delete-product",
+            "api-reference/endpoints/products/list-products",
+            "api-reference/endpoints/products/update-product",
+            "api-reference/endpoints/products/create-product"
+          ]
+        },
+        {
+          "group": "Categories",
+          "pages": [
+            "api-reference/endpoints/categories/list-categories",
+            "api-reference/endpoints/categories/create-category",
+            "api-reference/endpoints/categories/get-category",
+            "api-reference/endpoints/categories/delete-category",
+            "api-reference/endpoints/categories/create-category-1"
+          ]
+        },
+        {
+          "group": "Refunds",
+          "pages": [
+            "api-reference/endpoints/refunds/retrieve-refund",
+            "api-reference/endpoints/refunds/create-refund",
+            "api-reference/endpoints/refunds/list-refunds"
+          ]
+        },
+        {
+          "group": "Disputes",
+          "pages": [
+            "api-reference/endpoints/disputes/list-all-disputes",
+            "api-reference/endpoints/disputes/retrieve-dispute",
+            "api-reference/endpoints/disputes/update-dispute"
+          ]
+        },
+        {
+          "group": "Carts",
+          "pages": [
+            "api-reference/endpoints/carts/get-cart",
+            "api-reference/endpoints/carts/abandon-cart",
+            "api-reference/endpoints/carts/update-cart",
+            "api-reference/endpoints/carts/create-cart"
+          ]
+        },
+        {
+          "group": "Team",
+          "pages": [
+            "api-reference/endpoints/team/list-members",
+            "api-reference/endpoints/team/invite-member",
+            "api-reference/endpoints/team/remove-member",
+            "api-reference/endpoints/team/update-member"
+          ]
+        },
+        {
+          "group": "Webhooks",
+          "pages": [
+            "api-reference/endpoints/webhooks/list-webhooks",
+            "api-reference/endpoints/webhooks/create-webhook",
+            "api-reference/endpoints/webhooks/update-webhook",
+            "api-reference/endpoints/webhooks/retrieve-webhook",
+            "api-reference/endpoints/webhooks/delete-webhook"
+          ]
+        },
+        {
+          "group": "Public",
+          "pages": [
+            "api-reference/endpoints/public/retrieve-shop",
+            "api-reference/endpoints/public/get-available-categories",
+            "api-reference/endpoints/public/list-shop-products",
+            "api-reference/endpoints/public/retrieve-product",
+            "api-reference/endpoints/public/retrieve-reviews",
+            "api-reference/endpoints/public/search-shop"
+          ]
+        }
+      ]
+    }
+  ],
+  "footerSocials": {
+    "discord": "https://discord.gg/pandabase",
+    "github": "https://github.com/pandabase",
+    "x": "https://x.com/pandabaseio"
+  }
+}

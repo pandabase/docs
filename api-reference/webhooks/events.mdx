@@ -1,0 +1,136 @@
+---
+title: "Events"
+description: "Types of possible events that Pandabase can send to your application."
+---
+
+This is a list of all the types of events we currently send.
+
+The pattern we follow is `resource.event`.
+
+- `order.created`: `data` is an `order`
+
+ Triggered when a new order is created in the system.
+
+- `order.updated`: `data` is an `order`
+
+ Fired when an existing order's details are modified.
+
+- `order.completed`: `data` is an `order`
+
+ Occurs when an order is fulfilled and marked as complete.
+
+- `order.cancelled`: `data` is an `order`
+
+ Triggered when an order is cancelled before completion.
+
+- `order.refunded`: `data` is an `order`
+
+ Fired when a refund is issued for an order.
+
+- `payment.created`: `data` is a `payment`
+
+ Occurs when a new payment is initiated.
+
+- `payment.updated`: `data` is a `payment`
+
+ Triggered when an existing payment's details are modified.
+
+- `payment.succeeded`: `data` is a `payment`
+
+ Fired when a payment is successfully processed.
+
+- `payment.failed`: `data` is a `payment`
+
+ Occurs when a payment attempt fails.
+
+- `payment.refunded`: `data` is a `payment`
+
+ Triggered when a payment is refunded, either partially or fully.
+
+- `payment.pending`: `data` is a `payment`
+
+ Fired when a payment is awaiting processing or confirmation.
+
+- `dispute.created`: `data` is a `dispute`
+
+ Occurs when a new dispute or chargeback is initiated.
+
+- `dispute.updated`: `data` is a `dispute`
+
+ Triggered when the status or details of a dispute are updated.
+
+- `dispute.won`: `data` is a `dispute`
+
+ Fired when a dispute is resolved in the merchant's favor.
+
+- `dispute.lost`: `data` is a `dispute`
+
+ Occurs when a dispute is resolved in the customer's favor.
+
+- `subscription.created`: `data` is a `subscription`
+
+ Triggered when a new subscription is created.
+
+- `subscription.updated`: `data` is a `subscription`
+
+ Fired when an existing subscription's details are modified.
+
+- `subscription.cancelled`: `data` is a `subscription`
+
+ Occurs when a subscription is cancelled.
+
+- `subscription.trial_started`: `data` is a `subscription`
+
+ Triggered when a subscription's trial period begins.
+
+- `subscription.trial_ended`: `data` is a `subscription`
+
+ Fired when a subscription's trial period concludes.
+
+- `subscription.renewed`: `data` is a `subscription`
+
+ Occurs when a subscription is automatically renewed for a new period.
+
+- `subscription.paused`: `data` is a `subscription`
+
+ Triggered when a subscription is temporarily paused.
+
+- `subscription.resumed`: `data` is a `subscription`
+
+ Fired when a paused subscription is reactivated.
+
+- `invoice.created`: `data` is an `invoice`
+
+ Occurs when a new invoice is generated.
+
+- `invoice.updated`: `data` is an `invoice`
+
+ Triggered when an existing invoice's details are modified.
+
+- `invoice.paid`: `data` is an `invoice`
+
+ Fired when an invoice is marked as paid.
+
+- `invoice.payment_failed`: `data` is an `invoice`
+
+ Occurs when a payment attempt for an invoice fails.
+
+- `invoice.sent`: `data` is an `invoice`
+
+ Triggered when an invoice is sent to the customer.
+
+- `invoice.voided`: `data` is an `invoice`
+
+ Fired when an invoice is voided and is no longer valid.
+
+- `invoice.finalized`: `data` is an `invoice`
+
+ Occurs when an invoice is finalized and can no longer be modified.
+
+- `invoice.marked_uncollectible`: `data` is an `invoice`
+
+ Triggered when an invoice is marked as uncollectible.
+
+- `invoice.deleted`: `data` is an `invoice`
+
+ Fired when an invoice is deleted from the system.

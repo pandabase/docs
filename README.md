@@ -1,3 +1,1 @@
-# `@pandabase/docs`
-
-Documentation site of Pandabase.
+# `pandabase/docs`

@@ -1,0 +1,134 @@
+---
+title: Changelog
+description: "Keep track of every change that occurs to the Pandabase API."
+---
+
+This changelog lists all additions and updates to the Pandabase API, in
+chronological order. Release dates can be converted to `API-Version` by using the following order `YYYY/MM/DD`.
+
+# Changelog
+
+This changelog lists all additions and updates to the Pandabase API, in chronological order. Release dates can be converted to `API-Version` by using the following order `YYYY/MM/DD`.
+
+## August 30, 2024
+
+- Added new `/public` endpoints with multiple options for filtering.
+- Added new `/onboarding` and `/login` endpoints.
+- Deprecated support for `transactions[]` and replaced with `payment[]`.
+- Added `flags` to `shops`.
+
+## July 29, 2024
+
+- Added `/{shopId}/carts` to initiate a new cart.
+- Added `cartId?` optional param to order intent creation object.
+
+## June 6, 2024
+
+- Added:
+  - `/categories` route with support for listing categories, creating, getting, deleting, and updating.
+  - `categories` field to the product model.
+- Changed:
+  - Renamed response payloads for the following endpoints:
+    - POST `/products`: Now returns `{ product: { ... } }` instead of directly returning the product object.
+    - GET `/products`: Now returns `{ products: [{ ... }] }` instead of directly returning the product list.
+    - GET `/products/{id}`: Now returns `{ product: { ... } }` instead of directly returning the product object.
+
+## May 13, 2024
+
+- Changed:
+  - Renamed `shop` route to `shops`.
+- Added:
+  - `payout` route with support for `page` and `pageSize` parameters.
+  - `recipients` route for adding payout information.
+  - `flags.requirements.payouts` and `flags.requirements.kyc{status, checked_at}` to the `/user` object.
+  - `customer` route with support for auth tokens of types `["login", "register", "token"]` (action-based auth).
+  - Sending of payout emails.
+  - `documents` route for KYC-related tasks.
+- Removed:
+  - `paid_at` attribute from the payout object.
+- Updated:
+  - `recipient.compliance.status` added to `/user`.
+  - Successful API operations now return `OK` status instead of `SUCCESS`.
+  - Supported Stripe Express accounts.
+  - New health check message on `/healthcheck` route.
+  - `image_hash` returned on public endpoints.
+  - `coupon.enabled` added to coupons.
+  - `payments` route for payment flow creation.
+
+## April 3, 2024
+
+- Updated:
+  - Event terminology from `transaction` to `order` object.
+  - The event type previously referred to as `transaction` has been standardized as `order` object. The associated identifier now returns as `order.id`.
+  - Renamed all `transaction` event types to `order` for consistency.
+- Added:
+  - New event types related to payments:
+    - `payment` event type.
+    - New status events under `payment`:
+      - `payment.pending`: Indicates a pending payment.
+      - `payment.paid`: Denotes a successfully processed payment.
+      - `payment.success`: Signifies a successfully completed payment transaction.
+      - `payment.failed`: Indicates a failed payment transaction.
+
+## March 12, 2024
+
+- Added the following properties:
+  - To the `account` object:
+    - `account["flags"]["verified"]`
+    - `account["flags"]["two_fa_enabled"]`
+    - `account["flags"]["deleted"]`
+    - `account["flags"]["requirements"]{"activated"}`
+  - To the `shop` object:
+    - `shop["analytics"]["total_sales"]`
+    - `shop["analytics"]["total_earned"]`
+    - `shop["analytics"]["pending_balance"]`
+    - `shop["analytics"]["dispute_rate"]`
+    - `shop["flags"]["statement_descriptor"]`
+    - `shop["flags"]["features"]["pmp_enabled"]`
+    - `shop["flags"]["features"]["chargeback_protection_enabled"]`
+    - `shop["flags"]["features"]["storefront_enabled"]`
+    - `shop["flags"]["features"]["checkout_api_enabled"]`
+    - `shop["flags"]["features"]["domain_enabled"]`
+    - `shop["flags"]["features"]["ssl_enabled"]`
+    - `shop["flags"]["connect"]{"id", "enabled", "type"}`
+  - To the `transaction` object:
+    - `transactions["fee"]`
+    - `transactions["early_fraud_warning"]`
+  - To the `order` object:
+    - `order["discounted"]`
+    - `order["discount_code"]`
+    - `order["customer"]["customer_id"]`
+    - `order["customer"]["shipping_address_id"]`
+    - `order["customer"]["billing_address_id"]`
+  - To the `order_item`:
+    - `product["name"]` as `order_item["name"]`
+    - `product["id"]` as `order_item["product_id"]`
+    - `order_itemp["quantity"]`
+  - To the `refund` object:
+    - `refund["reason"]`
+    - `refund["status"]`
+  - To the `dispute` object:
+    - `dispute["dispute_id"]`
+    - `dispute["reason"]`
+    - `dispute["status"]`
+    - `dispute["method"]`
+    - `dispute["amount"]`
+    - `dispute["total_amount"]`
+    - `dispute["fee"]`
+  - To the `coupon` object:
+    - `coupon["name"]`
+    - `coupon["code"]`
+    - `coupon["type"]`
+    - `coupon["value"]`
+    - `coupon["limit"]`
+    - `coupon["limit_enabled"]`
+  - `address["state"]` to the `shipping_address` and `billing_address` objects.
+  - `analytics["dispute"]` to the `analytics` object.
+
+## February 20, 2024
+
+- General Team release
+
+## February 15, 2024
+
+- Implemented support for `sortBy.status`, and `sortBy.date` query parameters in the List Orders route.
