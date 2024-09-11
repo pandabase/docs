@@ -288,7 +288,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "status_code": 200,
+                  "statusCode": 200,
                   "message": "OK",
                   "payload": {}
                 }
@@ -449,7 +449,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "status_code": 409,
+                  "statusCode": 409,
                   "message": "A user with the same \"username\" already exists.",
                   "error": "CONFLICT"
                 }
@@ -651,7 +651,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "status_code": 400,
+                  "statusCode": 400,
                   "message": "The phone number you've provided is invalid.",
                   "error": "BAD_REQUEST"
                 }
@@ -2889,7 +2889,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "status_code": 200,
+                  "statusCode": 200,
                   "message": "OK",
                   "payload": {
                     "shop": {
@@ -3080,7 +3080,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "status_code": 200,
+                  "statusCode": 200,
                   "message": "OK",
                   "payload": {
                     "categories": [
@@ -3309,7 +3309,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "status_code": 200,
+                  "statusCode": 200,
                   "message": "OK",
                   "payload": {
                     "products": [
@@ -3560,7 +3560,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "status_code": 200,
+                  "statusCode": 200,
                   "message": "OK",
                   "payload": {
                     "product": {
@@ -3789,7 +3789,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "status_code": 200,
+                  "statusCode": 200,
                   "message": "OK",
                   "payload": {
                     "product": {
@@ -4001,7 +4001,7 @@
                   "type": "object"
                 },
                 "example": {
-                  "status_code": 200,
+                  "statusCode": 200,
                   "message": "OK",
                   "payload": {
                     "products": [
