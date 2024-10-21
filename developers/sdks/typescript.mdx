@@ -86,3 +86,24 @@ await shop.coupons.list({ page_size: 10, page_number: 1 });
 ```ts
 await shop.coupons.retrieve("cpn_");
 ```
+
+- `create({ CreateCouponRequestBody })`
+
+```ts
+await shop.coupons.create({
+  name: "Summer sale 2025",
+  type: "PERCENTAGE",
+  code: "SUMMER SALE",
+  value: 10,
+  limit: 5,
+  limited: false,
+});
+```
+
+- `update({ UpdateCouponRequestBody })`
+
+```ts
+await shop.coupons.update("cpn_", {
+  name: "Summer sale 2025",
+});
+```

@@ -70,7 +70,10 @@
     },
     {
       "group": "Learn",
-      "pages": ["developers/learn/dynamic-payments"]
+      "pages": [
+        "developers/learn/dynamic-payments",
+        "developers/learn/lifecycle"
+      ]
     },
     {
       "group": "Webhooks",
