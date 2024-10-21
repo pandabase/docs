@@ -36,66 +36,66 @@
       "url": "changelog"
     },
     {
-      "name": "API Reference",
-      "url": "api-reference"
+      "name": "Developers",
+      "url": "developers"
     }
   ],
   "navigation": [
     {
-      "group": "Get Started",
-      "pages": [
-        "introduction",
-        "quickstart"
-      ]
+      "group": "Get started",
+      "pages": ["introduction", "quickstart"]
     },
     {
       "group": "The Guide",
       "pages": [
-        "/guides/stores",
-        "/guides/products",
-        "/guides/orders",
-        "/guides/payments",
-        "/guides/fraud-shield",
-        "/guides/team",
-        "/guides/fees"
+        "guides/stores",
+        "guides/products",
+        "guides/orders",
+        "guides/payments",
+        "guides/fraud-shield",
+        "guides/team",
+        "guides/fees"
       ]
     },
     {
-      "group": "Developers",
+      "group": "Basics",
       "pages": [
-        "api-reference/introduction",
-        "api-reference/pagination",
-        "api-reference/rate-limits",
-        "api-reference/idempotency",
-        "api-reference/errors",
-        "api-reference/changelog"
+        "developers/introduction",
+        "developers/pagination",
+        "developers/rate-limits",
+        "developers/idempotency",
+        "developers/errors",
+        "developers/changelog"
       ]
     },
     {
       "group": "Learn",
-      "pages": [
-        "api-reference/learn/dynamic-payments"
-      ]
+      "pages": ["developers/learn/dynamic-payments"]
     },
     {
       "group": "Webhooks",
+      "pages": ["developers/webhooks/overview", "developers/webhooks/events"]
+    },
+    {
+      "group": "SDKs",
       "pages": [
-        "api-reference/webhooks/overview",
-        "api-reference/webhooks/events"
+        "developers/sdks/typescript",
+        "developers/sdks/go",
+        "developers/sdks/python"
       ]
     },
     {
-      "group": "Resources",
+      "group": "API Reference",
       "pages": [
         {
-          "group": "Public",
+          "group": "Public API",
           "pages": [
-            "api-reference/resources/public/retrieve-shop",
-            "api-reference/resources/public/get-available-categories",
-            "api-reference/resources/public/list-shop-products",
-            "api-reference/resources/public/retrieve-product",
-            "api-reference/resources/public/retrieve-reviews",
-            "api-reference/resources/public/search-shop"
+            "developers/api-reference/public/retrieve-shop",
+            "developers/api-reference/public/get-available-categories",
+            "developers/api-reference/public/list-shop-products",
+            "developers/api-reference/public/retrieve-product",
+            "developers/api-reference/public/retrieve-reviews",
+            "developers/api-reference/public/search-shop"
           ]
         }
       ]

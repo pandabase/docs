@@ -1,0 +1,88 @@
+---
+title: TypeScript
+description: "Use our TypeScript SDK to interact with our API."
+---
+
+## Installation
+
+Install the package with:
+
+```sh
+# Bun
+bun add pandabase
+
+# pnpm
+pnpm add pandabase
+
+# npm
+npm install pandabase
+```
+
+## Usage
+
+The package needs to be configured with your api key, which is available in the api keys tab.
+
+```ts
+import Pandabase from "pandabase";
+
+const pandabaseClient = new Pandabase("tokn_", { ...options });
+
+const shop = await pandabaseClient.shops("shop_");
+
+const products = await shop.products.list({ page: 1, page_size: 10 });
+
+console.log(products);
+```
+
+## Configuration
+
+The package can be initialized with several options:
+
+```ts
+import Pandabase from "pandabase";
+
+const pandabaseClient = new Pandabase("tokn_", {
+  idempotency_enabled: true,
+  max_retries: 5,
+  sandbox: true, // If you want to use the sandbox instance
+});
+```
+
+## Signatures
+
+### `shops`
+
+- `list()`
+- `retrieve(shopId)`
+
+```ts
+await shop.retrieve("shop_");
+```
+
+### `products`
+
+- `list({ page_size: number, page_number: number })`
+
+```ts
+await shop.products.list({ page_size: 10, page_number: 1 });
+```
+
+- `retrieve(productId)`
+
+```ts
+await shop.products.retrieve("prod_");
+```
+
+### `coupons`
+
+- `list({ page_size: number, page_number: number })`
+
+```ts
+await shop.coupons.list({ page_size: 10, page_number: 1 });
+```
+
+- `retrieve(couponId)`
+
+```ts
+await shop.coupons.retrieve("cpn_");
+```

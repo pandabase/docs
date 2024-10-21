@@ -13,9 +13,17 @@ You can use the commands listed below with `curl` by providing your token.
 
 ## API Basics
 
-Our API is exposed as an `HTTP/1.1` and `HTTP/2` service over TLS. All endpoints live
-under the URL `https://api.pandabase.io` and generally follow the REST
-architecture.
+| Environment | URL                                | Protocols                 | Architecture |
+| ----------- | ---------------------------------- | ------------------------- | ------------ |
+| Production  | `https://api.pandabase.io`         | HTTP/1.1, HTTP/2 over TLS | REST         |
+| Sandbox     | `https://api.sandbox.pandabase.io` | HTTP/1.1, HTTP/2 over TLS | REST         |
+
+## Additional Information
+
+- All endpoints are accessible under the specified URLs.
+- The API follows the REST architecture principles.
+- Both production and sandbox environments support HTTP/1.1 and HTTP/2 protocols.
+- All communications are secured using TLS (Transport Layer Security).
 
 ### Domains and IP addresses
 
