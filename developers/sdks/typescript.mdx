@@ -73,6 +73,41 @@ await shop.products.list({ page_size: 10, page_number: 1 });
 await shop.products.retrieve("prod_");
 ```
 
+- `retrieveByHandle(handle)`
+
+```ts
+await shop.products.retrieveByHandle("handle");
+```
+
+- `create({ CreateProductRequestBody })`
+
+```ts
+await shop.products.create({
+  title: "Product",
+  subtitle: "Product subtitle",
+  description: "A very long description",
+  price: 500,
+  currency: "USD",
+  type: "SERIAL",
+  handle: "handle",
+});
+```
+
+- `update(productId, { UpdateProductRequestBody })`
+
+```ts
+await shop.products.update("prod_", {
+  name: "New product name",
+  handle: "new-handle",
+});
+```
+
+- `delete(productId)`
+
+```ts
+await shop.products.delete("prod_");
+```
+
 ### `coupons`
 
 - `list({ page_size: number, page_number: number })`
@@ -100,7 +135,7 @@ await shop.coupons.create({
 });
 ```
 
-- `update({ UpdateCouponRequestBody })`
+- `update(couponId, { UpdateCouponRequestBody })`
 
 ```ts
 await shop.coupons.update("cpn_", {

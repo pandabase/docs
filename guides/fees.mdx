@@ -1,4 +1,80 @@
 ---
 title: "Fees"
-description: ""
+description: "Learn about fees in Pandabase"
 ---
+
+We always strive to keep our fees as low as possible, but this isn't always feasible due to various factors.
+
+## Fee Structure
+
+Here are the current rates:
+
+| **Service**                  | **Fees**                                               |
+| ---------------------------- | ------------------------------------------------------ |
+| **Payment Processing**       | 6% + $0.50 per successful payment                      |
+| **Tax Calculation**          | 0.5% + $0.10 per successful tax remit                  |
+| **Radar (Fraud Protection)** | $0.10 per successful payment                           |
+| **Subscription**             | 1% of the subscription amount + payment processing fee |
+| **Invoicing**                | $0.10 per successful paid invoice                      |
+| **Dispute**                  | $20.00 per dispute                                     |
+| **Early Dispute Alerts**     | $25.00 per alert                                       |
+
+### How does it work?
+
+We've prepared various examples to help you easily understand our fees, which are actually quite low. The **Payment Processing** fee covers everything, including currency conversion and international payment processing, totaling **6% + $0.50** per successful payment. We do not charge anything beyond that.
+
+If you enable our **Merchant of Record services**, there will be an additional fee of **0.5% + $0.10** per successful payment.
+
+Therefore, if you combine the **Payment Processing** and **Tax Calculation** services, the total charge will be **6.5% + $0.60** per payment processed.
+
+### Payment Scenario
+
+Let's say a customer in Germany purchases a digital product priced at `$20.00` `USD` from your shop.
+
+Given the VAT rate of `20%`, the total charged will be `$24.00` USD.
+
+Since the customer is using euros, this would convert to approximately `€22.22` `EUR` at the current exchange rate.
+
+Once the customer makes the payment, we will remit `$4.00` USD (`20% VAT`) to the German government.
+
+Next, we will charge you our service fee of **`6.5% + $0.60`** on the product's base price. This means you'll incur fees of about `$1.90 USD` in fees.
+
+- **Recap**
+  - **Total Charged**: `$24.00 USD` (includes VAT).
+  - **Conversion**: Approximately `€22.22 EUR` for the customer.
+  - **VAT Remittance**: We will remit `$4.00 USD` to the German government.
+  - **Service Fees**: Total fee is `6.5% + $0.60`, resulting in about `$1.90 USD` in fees.
+  - **Net Profit**: After fees, your profit is `$18.10 USD`. If you enable Radar, your profit will be `$18.00 USD`.
+
+### Invoicing Scenario
+
+We will charge an additional **$0.10 USD** per successful invoice, alongside the payment fee.
+
+For example, for a **100.00 USD** invoice with taxes and Radar enabled for a customer in California (where the tax rate is **20%**), the total charged will be **120.00 USD** (100.00 + 20.00 tax). We will remit the **$20.00 USD** tax to the California state.
+
+Next, we will charge you:
+
+- **6.5%** of the invoice amount **$6.50**
+- **$0.60** for payment processing
+- **$0.10** for Radar
+- **$0.10** for invoicing
+
+In total, the fees will be:
+
+- **6.50 + 0.60 + 0.10 + 0.10 = $7.30 USD**.
+
+After all fees, you will be left with **120.00 - 7.30 = $92.70 USD**.
+
+### Subscription Scenario
+
+To the written.
+
+### FAQs
+
+<Accordion title="What happens if I lose a dispute?">
+  If you lose a dispute, we will deduct the payment amount along with the
+  associated fees. For example, if the dispute amount was **`$24.00 USD`**
+  (including taxes) and the fees totaled **`$1.90 USD`**, we will deduct
+  **`$25.90 USD`** from your balance. You must keep your dispute rates at an
+  optimal level otherwise we will restrict your shop.
+</Accordion>

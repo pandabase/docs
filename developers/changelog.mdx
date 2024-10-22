@@ -6,6 +6,59 @@ description: "Keep track of every change that occurs to the Pandabase API."
 This changelog lists all additions and updates to the Pandabase API, in
 chronological order. Release dates can be converted to `Pandabase-Version` by using the following order `YYYY/MM/DD`.
 
+## October 22, 2024
+
+- **New Properties:**
+
+  - `tax_calculation_enabled`
+  - `localized_pricing_enabled`
+  - `regional_pricing_enabled`
+  - `checkout_collect_phone_enabled`
+  - `checkout_verify_email_enabled`
+  - `plan`
+
+- **Endpoints Affected:**
+
+  - `/shops`
+  - `/shops/flags`
+  - `/products`
+  - `/categories`
+  - `/coupons`
+
+- **Renamed Property:**
+
+  - `cash_app` has been renamed to `cashapp` in the `PaymentMethod[]` flag object.
+
+- **Added Payment Methods:**
+
+  - `venmo`
+  - `paypal`
+  - `multiple_cards` (supporting Visa, MasterCard, etc.)
+
+- **Removed Property:**
+
+  - `stripe_connect` has been removed from the `Flag` object.
+
+- **Products:**
+
+  - Added `images[{ id, hash, path, preview_url, resolution }]` to `Product[]` and the `Product` object.
+  - Added `categories[]` to `Product[]` and the `Product` object.
+
+- **Shops:**
+
+  - Added `icon_url` to `Shop[]` and the `Shop` object.
+
+- **Pagination** List request responses now include a [`meta`](/developers/pagination#meta-object-properties) object with pagination information. The default values are:
+
+  - `page_size`: `10`
+  - `page`: `1`
+
+- **Filtering and Sorting** Optional capabilities for advanced sorting, filtering and searching has been added to list endpoints.
+  - `filter` (Applies filters to the query using defined operators)
+    - Operators: `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `in`, `nin`, `contains`.
+  - `sort` (Defines the sorting criteria for the results)
+  - `search` (A search term that looks for matches)
+
 ## October 5, 2024
 
 - Fixed bugs with File API.
