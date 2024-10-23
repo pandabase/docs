@@ -24,15 +24,15 @@ This has many practical applications, for example, a site selling dynamic course
 <Steps>
 <Step title="Grab the secrets">
 
-Log in to your account and navigate to the "API Tokens" section. Click the "Create New Token" button. The generated API token will look similar to this: `api_tok_A7eUMjyjyMfV9G0u7YH18SozCpr1hEiU`. Copy and securely store the API token.
+Log in to your account and navigate to the "API Tokens" section. Click the "Create New Token" button. The generated API token will look similar to this: `ey.xxxx`. Copy and securely store the API token.
 
-Next in your shop, create a new webhook. The webhook secret will look like this: `whsk_GseIBNijOmcUFeI3G5OEkgfus5ZfRMZ5`. Copy and securely store the webhook secret.
+Next in your shop, create a new webhook. The webhook secret will look like this: `whsk_xxx`. Copy and securely store the webhook secret.
 
 We are storing these two secrets as
 
 ```env .env
-PANDABASE_API_TOKEN="api_tok_A7eUMjyjyMfV9G0u7YH18SozCpr1hEiU"
-PANDABASE_WEBHOOK_SECRET="whsk_GseIBNijOmcUFeI3G5OEkgfus5ZfRMZ5"
+PANDABASE_API_TOKEN=""
+PANDABASE_WEBHOOK_SECRET=""
 ```
 
 in our `.env` file.

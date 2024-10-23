@@ -69,22 +69,26 @@ Here are several examples:
 import crypto from "crypto";
 import { Request, Response } from "express";
 
-const secret = "wh_";
-
 function validateSignature(req: Request, res: Response) {
-  const signature = crypto
-    .createHmac("sha256", secret)
-    .update(JSON.stringify(req.body))
-    .digest("hex");
-
-  if (req.headers["x-pandabase-signature"] === signature) {
-    console.log("Valid signature. The response was sent by Pandabase.");
-    res.status(200).send("Request processed");
-  } else {
-    console.log("Invalid signature.");
-    res.status(401).send("Invalid signature");
+  if (!req.headers["x-pandabase-signature"]) return res.status(401).send();
+  try {
+    const valid = crypto.timingSafeEqual(
+      Buffer.from(req.headers["x-pandabase-signature"] as string, "hex"),
+      Buffer.from(
+        crypto
+          .createHmac("sha256", "wh_")
+          .update(JSON.stringify(req.body))
+          .digest("hex"),
+        "hex"
+      )
+    );
+    res.status(valid ? 200 : 401).send();
+  } catch {
+    res.status(401).send();
   }
 }
+
+export { validateSignature };
 ```
 
 ```python Python
@@ -155,28 +159,29 @@ use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
 use serde_json::Value;
+use subtle::ConstantTimeEq;
 
 type HmacSha256 = Hmac<Sha256>;
 
-const SECRET: &str = "wh_"; // paste your secret here
+const SECRET: &str = "wh_";
 
 async fn validate_signature(req: HttpRequest, body: web::Json<Value>) -> impl Responder {
     let mut mac = HmacSha256::new_from_slice(SECRET.as_bytes())
         .expect("HMAC can take key of any size");
 
     mac.update(serde_json::to_string(&body).unwrap().as_bytes());
-
-    let signature = hex::encode(mac.finalize().into_bytes());
+    let expected = hex::encode(mac.finalize().into_bytes());
 
     match req.headers().get("x-pandabase-signature") {
-        Some(header) if header == signature.as_str() => {
-            println!("Valid signature. The response was sent by Pandabase.");
-            HttpResponse::Ok().body("Request processed")
+        Some(header) => {
+            let provided = header.to_str().unwrap_or("");
+            if expected.as_bytes().ct_eq(provided.as_bytes()).into() {
+                HttpResponse::Ok().body("Request processed")
+            } else {
+                HttpResponse::Unauthorized().body("Invalid signature")
+            }
         }
-        _ => {
-            println!("Invalid signature.");
-            HttpResponse::Unauthorized().body("Invalid signature")
-        }
+        None => HttpResponse::Unauthorized().body("Invalid signature")
     }
 }
 
