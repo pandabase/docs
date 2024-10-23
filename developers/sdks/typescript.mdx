@@ -11,13 +11,13 @@ Install the package with:
 
 ```sh
 # Bun
-bun add @pandabase/node
+bun add pandabase
 
 # pnpm
-pnpm add @pandabase/node
+pnpm add pandabase
 
 # npm
-npm install @pandabase/node
+npm install pandabase
 ```
 
 ## Usage
@@ -25,7 +25,7 @@ npm install @pandabase/node
 The package needs to be configured with your api key, which is available in the api keys tab.
 
 ```ts
-import Pandabase from "@pandabase/node";
+import Pandabase from "pandabase";
 
 const pandabaseClient = new Pandabase("tokn_", { ...options });
 
@@ -41,7 +41,7 @@ console.log(products);
 The package can be initialized with several options:
 
 ```ts
-import Pandabase from "@pandabase/node";
+import Pandabase from "pandabase";
 
 const pandabaseClient = new Pandabase("tokn_", {
   idempotency_enabled: true,
