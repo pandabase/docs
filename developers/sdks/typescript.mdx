@@ -3,19 +3,21 @@ title: TypeScript
 description: "Use our TypeScript SDK to interact with our API."
 ---
 
+The TypeScript library provides convenient access to the Pandabase API from applications written in server-side TypeScript/JavaScript.
+
 ## Installation
 
 Install the package with:
 
 ```sh
 # Bun
-bun add pandabase
+bun add @pandabase/node
 
 # pnpm
-pnpm add pandabase
+pnpm add @pandabase/node
 
 # npm
-npm install pandabase
+npm install @pandabase/node
 ```
 
 ## Usage
@@ -23,7 +25,7 @@ npm install pandabase
 The package needs to be configured with your api key, which is available in the api keys tab.
 
 ```ts
-import Pandabase from "pandabase";
+import Pandabase from "@pandabase/node";
 
 const pandabaseClient = new Pandabase("tokn_", { ...options });
 
@@ -39,7 +41,7 @@ console.log(products);
 The package can be initialized with several options:
 
 ```ts
-import Pandabase from "pandabase";
+import Pandabase from "@pandabase/node";
 
 const pandabaseClient = new Pandabase("tokn_", {
   idempotency_enabled: true,
