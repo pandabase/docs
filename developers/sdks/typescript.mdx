@@ -27,9 +27,9 @@ The package needs to be configured with your api key, which is available in the 
 ```ts
 import Pandabase from "pandabase";
 
-const pandabaseClient = new Pandabase("tokn_", { ...options });
+const pandabase = new Pandabase("tokn_", { ...options });
 
-const shop = await pandabaseClient.shops("shop_");
+const shop = await pandabase.shops("shop_");
 
 const products = await shop.products.list({ page: 1, page_size: 10 });
 
@@ -43,9 +43,13 @@ The package can be initialized with several options:
 ```ts
 import Pandabase from "pandabase";
 
-const pandabaseClient = new Pandabase("tokn_", {
+const pandabase = new Pandabase("tokn_", {
   idempotency_enabled: true,
-  max_retries: 5,
+  retries: {
+    max_retries: 5, // default is 3
+    base_delay: 3000 // 32000 default
+    max_delay: 250 // default 250
+  },
   sandbox: true, // If you want to use the sandbox instance
 });
 ```
