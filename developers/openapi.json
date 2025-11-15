@@ -1,3095 +1,847 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Pandabase",
-    "description": "Documentation for Pandabase API.\n\nThe Pandabase API uses versioning with the `X-Pandabase-Version` header, which allows you to identify the current API version.\n\nIn the event of an internal server error, our API includes a `Support ID` in the response, which is the `x-request-id` header provided with every request. This ID helps us track requests, assist with debugging, and provide customer support.",
-    "version": "1.0.0"
+    "title": "Pandabase API",
+    "version": "3.0.0",
+    "description": "The Pandabase API allows you to programmatically interact with your Pandabase resources. All API responses follow a consistent format with an `ok` field indicating success or failure.",
+    "contact": {
+      "name": "Pandabase Support",
+      "url": "https://pandabase.io"
+    }
   },
   "servers": [
     {
-      "url": "https://api.pandabase.io"
+      "url": "https://pandabase.io/api",
+      "description": "Production API"
+    },
+    {
+      "url": "https://pandabase.io/api/preview",
+      "description": "Preview Features"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
     }
   ],
   "components": {
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "bearerFormat": "sk_v3_xxx",
+        "description": "V3 API key authentication. Format: `sk_v3_xxxxx`"
+      }
+    },
+    "parameters": {
+      "StorefrontId": {
+        "name": "X-Storefront-Id",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Your storefront/shop ID"
+      }
+    },
+    "schemas": {
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": true,
+            "description": "Always true for successful requests"
+          },
+          "data": {
+            "type": "object",
+            "description": "The requested resource or response data"
+          }
+        },
+        "required": ["ok", "data"]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "example": false,
+            "description": "Always false for failed requests"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "example": "invalid_request",
+                "description": "Machine-readable error code"
+              },
+              "message": {
+                "type": "string",
+                "example": "The request was malformed or missing required parameters",
+                "description": "Human-readable error message"
+              }
+            },
+            "required": ["code", "message"]
+          }
+        },
+        "required": ["ok", "error"]
+      },
+      "Payment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "pmnt_1234567890"
+          },
+          "amount": {
+            "type": "integer",
+            "example": 1000,
+            "description": "Amount in cents"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "processing", "succeeded", "failed", "canceled"],
+            "example": "succeeded"
+          },
+          "description": {
+            "type": "string",
+            "example": "Premium Plan"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-12-25T10:00:00Z"
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "prod_abc123"
+          },
+          "name": {
+            "type": "string",
+            "example": "Premium Plan"
+          },
+          "price": {
+            "type": "integer",
+            "example": 2999,
+            "description": "Price in cents"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "description": {
+            "type": "string"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "hash": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                },
+                "preview_url": {
+                  "type": "string"
+                },
+                "resolution": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "ord_xyz789"
+          },
+          "amount": {
+            "type": "integer",
+            "example": 2999
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "completed", "canceled", "refunded"]
+          },
+          "customer": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string",
+                "format": "email"
+              }
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Coupon": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "cpn_def456"
+          },
+          "code": {
+            "type": "string",
+            "example": "SAVE20"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["percentage", "fixed"]
+          },
+          "value": {
+            "type": "integer",
+            "example": 20
+          },
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "License": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "lic_abc123"
+          },
+          "key": {
+            "type": "string",
+            "example": "XXXX-XXXX-XXXX-XXXX"
+          },
+          "product_id": {
+            "type": "string",
+            "example": "prod_xyz789"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "suspended", "expired", "revoked"],
+            "example": "active"
+          },
+          "customer_id": {
+            "type": "string",
+            "example": "cust_123456"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Custom metadata associated with the license"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2025-12-31T23:59:59Z"
+          },
+          "activated_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Authentication failed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "ok": false,
+              "error": {
+                "code": "invalid_api_key",
+                "message": "The provided API key is invalid or expired"
+              }
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "ok": false,
+              "error": {
+                "code": "not_found",
+                "message": "The requested resource could not be found"
+              }
+            }
+          }
+        }
+      },
+      "RateLimitError": {
+        "description": "Rate limit exceeded",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "ok": false,
+              "error": {
+                "code": "rate_limit_exceeded",
+                "message": "Rate limit exceeded. Please retry after the reset time."
+              }
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "Validation failed",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            },
+            "example": {
+              "ok": false,
+              "error": {
+                "code": "validation_error",
+                "message": "The 'amount' field is required and must be a positive integer"
+              }
+            }
+          }
+        }
       }
     }
   },
-  "tags": [
-    {
-      "name": "Onboarding",
-      "description": "Onboarding consists of API routes used to onboard new users to our platform. These routes are intended for internal use only and should not be accessed by external applications."
-    },
-    {
-      "name": "Log In"
-    },
-    {
-      "name": "Users"
-    },
-    {
-      "name": "Customers",
-      "description": "The Customer API is intended for private use within our platform. While there are valid use cases for accessing it directly, it is generally not recommended."
-    },
-    {
-      "name": "Tokens",
-      "description": "Tokens function as keys that allow you to access our API without IP restrictions."
-    },
-    {
-      "name": "Sessions",
-      "description": "Sessions are not intended for public use, and you should avoid interacting with this resource."
-    },
-    {
-      "name": "Payouts",
-      "description": "A payout object is created when we process a payment to you or when you initiate a payout to a bank. You can list all payouts, create new payouts, and retrieve payout information based on their ID."
-    },
-    {
-      "name": "Analytics",
-      "description": "The Analytics API provides raw data on both combined shop analytics and individual metrics, depending on your preferences."
-    },
-    {
-      "name": "Shops",
-      "description": "Shops are the parent object for products, categories, reviews, payments, refunds, and more. They are the core resource you'll use to sell your products."
-    },
-    {
-      "name": "Products",
-      "description": "Products are the items you sell in your shop. Each product has attributes like name, description, price, and images. You can organize them into categories, and set stock levels to control availability."
-    },
-    {
-      "name": "Categories",
-      "description": "Categories help organize products in your shop into groups, making it easier for customers to find related items."
-    },
-    {
-      "name": "Coupons",
-      "description": "Coupons are promotional codes or vouchers that offer discounts or special deals on products in your shop. They can be applied at checkout to reduce the total price or provide other benefits, helping to attract and retain customers."
-    },
-    {
-      "name": "Orders",
-      "description": "Orders are records of purchases made by customers. They include details such as the items bought, quantities, prices, and customer information. Orders track the process from purchase to fulfillment and are essential for managing sales and inventory."
-    },
-    {
-      "name": "Payments",
-      "description": "Payments are transactions that complete the purchase process by transferring funds from the customer to your shop. They include details such as the amount paid, payment method, and transaction status."
-    },
-    {
-      "name": "Reviews",
-      "description": "Reviews are customer feedback on products or services. They include ratings, comments providing insights into customer satisfaction and product performance."
-    },
-    {
-      "name": "Refunds",
-      "description": "Refunds allow you to return funds for an order or payment that hasn’t been refunded yet. The money will be returned to the original payment method. Fees charged by us and our payment processor are non-refundable and will be deducted from your shop or account balance."
-    },
-    {
-      "name": "Disputes",
-      "description": "A dispute occurs when a customer challenges a charge with their card issuer. When this happens, you have the chance to provide evidence to demonstrate that the charge is legit."
-    },
-    {
-      "name": "Carts",
-      "description": "Carts are temporary collections of items that customers select while shopping. They allow customers to review, modify, and finalize their purchases before proceeding to checkout. Carts track the items, quantities, and total cost until the transaction is completed."
-    },
-    {
-      "name": "Team",
-      "description": "A team is a group of members who can manage your shop through their vendor dashboard. You can grant them access as needed."
-    },
-    {
-      "name": "Webhooks",
-      "description": "Webhooks are automated messages sent from one application to another when specific events occur. They provide real-time notifications about changes or updates, allowing you to respond immediately to events like new orders, payment updates, or inventory changes."
-    },
-    {
-      "name": "Public",
-      "description": "Public endpoints are the building blocks for creating your own custom storefront theme with any stack you prefer. We also utilize the Public API behind the scenes theres no hidden magic."
-    }
-  ],
   "paths": {
-    "/users/onboarding": {
+    "/payments": {
       "post": {
-        "tags": [
-          "Onboarding"
+        "summary": "Create a payment",
+        "description": "Create a new payment intent for a customer",
+        "operationId": "createPayment",
+        "tags": ["Payments"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/StorefrontId"
+          }
         ],
-        "summary": "Start Onboarding",
-        "description": "This route is used to initiate the onboarding process for a user. Once a request is made, it remains active in the system for one hour. During this time, the user must use the onboarding link sent to their email to begin the onboarding process.",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "example": {
-                  "username": "johndoe",
-                  "email": "john.doe@example.com"
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "example": "{{$guid}}"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "headers": {
-              "Content-Security-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                }
-              },
-              "Cross-Origin-Opener-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Cross-Origin-Resource-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Origin-Agent-Cluster": {
-                "schema": {
-                  "type": "string",
-                  "example": "?1"
-                }
-              },
-              "Referrer-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "no-referrer"
-                }
-              },
-              "Strict-Transport-Security": {
-                "schema": {
-                  "type": "string",
-                  "example": "max-age=15552000; includeSubDomains"
-                }
-              },
-              "X-Content-Type-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "nosniff"
-                }
-              },
-              "X-DNS-Prefetch-Control": {
-                "schema": {
-                  "type": "string",
-                  "example": "off"
-                }
-              },
-              "X-Download-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "noopen"
-                }
-              },
-              "X-Frame-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "SAMEORIGIN"
-                }
-              },
-              "X-Permitted-Cross-Domain-Policies": {
-                "schema": {
-                  "type": "string",
-                  "example": "none"
-                }
-              },
-              "X-XSS-Protection": {
-                "schema": {
-                  "type": "integer",
-                  "example": "0"
-                }
-              },
-              "access-control-allow-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "*"
-                }
-              },
-              "x-ratelimit-limit": {
-                "schema": {
-                  "type": "integer",
-                  "example": "10"
-                }
-              },
-              "x-ratelimit-remaining": {
-                "schema": {
-                  "type": "integer",
-                  "example": "9"
-                }
-              },
-              "x-ratelimit-reset": {
-                "schema": {
-                  "type": "integer",
-                  "example": "1"
-                }
-              },
-              "content-type": {
-                "schema": {
-                  "type": "string",
-                  "example": "application/json; charset=utf-8"
-                }
-              },
-              "etag": {
-                "schema": {
-                  "type": "string",
-                  "example": "\"L2XGzR5wCU/aR1RwFYYiPscQLgs=\""
-                }
-              },
-              "x-request-id": {
-                "schema": {
-                  "type": "string",
-                  "example": "BB5yPf1Pvm1paF8oHQ67opCgoReUBYAF"
-                }
-              },
-              "x-pandabase-version": {
-                "schema": {
-                  "type": "string",
-                  "example": "2024-09-03"
-                }
-              },
-              "content-length": {
-                "schema": {
-                  "type": "integer",
-                  "example": "46"
-                }
-              },
-              "Date": {
-                "schema": {
-                  "type": "string",
-                  "example": "Tue, 03 Sep 2024 17:22:01 GMT"
-                }
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string",
-                  "example": "keep-alive"
-                }
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string",
-                  "example": "timeout=72"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "statusCode": 200,
-                  "message": "OK",
-                  "payload": {}
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "headers": {
-              "Content-Security-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                }
-              },
-              "Cross-Origin-Opener-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Cross-Origin-Resource-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Origin-Agent-Cluster": {
-                "schema": {
-                  "type": "string",
-                  "example": "?1"
-                }
-              },
-              "Referrer-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "no-referrer"
-                }
-              },
-              "Strict-Transport-Security": {
-                "schema": {
-                  "type": "string",
-                  "example": "max-age=15552000; includeSubDomains"
-                }
-              },
-              "X-Content-Type-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "nosniff"
-                }
-              },
-              "X-DNS-Prefetch-Control": {
-                "schema": {
-                  "type": "string",
-                  "example": "off"
-                }
-              },
-              "X-Download-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "noopen"
-                }
-              },
-              "X-Frame-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "SAMEORIGIN"
-                }
-              },
-              "X-Permitted-Cross-Domain-Policies": {
-                "schema": {
-                  "type": "string",
-                  "example": "none"
-                }
-              },
-              "X-XSS-Protection": {
-                "schema": {
-                  "type": "integer",
-                  "example": "0"
-                }
-              },
-              "access-control-allow-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "*"
-                }
-              },
-              "x-ratelimit-limit": {
-                "schema": {
-                  "type": "integer",
-                  "example": "10"
-                }
-              },
-              "x-ratelimit-remaining": {
-                "schema": {
-                  "type": "integer",
-                  "example": "9"
-                }
-              },
-              "x-ratelimit-reset": {
-                "schema": {
-                  "type": "integer",
-                  "example": "1"
-                }
-              },
-              "content-type": {
-                "schema": {
-                  "type": "string",
-                  "example": "application/json; charset=utf-8"
-                }
-              },
-              "etag": {
-                "schema": {
-                  "type": "string",
-                  "example": "\"SDLXTvY1OQKm9HA9DvTs/1+G9Ng=\""
-                }
-              },
-              "x-request-id": {
-                "schema": {
-                  "type": "string",
-                  "example": "Ha1y5foea0emqfejms0VJpcCThXQN5I7"
-                }
-              },
-              "x-pandabase-version": {
-                "schema": {
-                  "type": "string",
-                  "example": "2024-09-03"
-                }
-              },
-              "content-length": {
-                "schema": {
-                  "type": "integer",
-                  "example": "99"
-                }
-              },
-              "Date": {
-                "schema": {
-                  "type": "string",
-                  "example": "Tue, 03 Sep 2024 17:21:17 GMT"
-                }
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string",
-                  "example": "keep-alive"
-                }
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string",
-                  "example": "timeout=72"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "statusCode": 409,
-                  "message": "A user with the same \"username\" already exists.",
-                  "error": "CONFLICT"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/onboarding/verify-phone": {
-      "post": {
-        "tags": [
-          "Onboarding"
-        ],
-        "summary": "Request Phone Verification",
-        "description": "This route uses the token sent via email during the `REGISTER_USER` intent. It requires two parameters: `phone` and `country_code`. The `country_code` must be an ISO2 code that matches the country of the provided phone number, which should include the country code. Once the parameters are validated, an OTP will be sent to the phone number for further verification.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "country_code": "",
-                  "phone": ""
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "example": "{{$guid}}"
-          },
-          {
-            "name": "token",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "headers": {
-              "Content-Security-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                }
-              },
-              "Cross-Origin-Opener-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Cross-Origin-Resource-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Origin-Agent-Cluster": {
-                "schema": {
-                  "type": "string",
-                  "example": "?1"
-                }
-              },
-              "Referrer-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "no-referrer"
-                }
-              },
-              "Strict-Transport-Security": {
-                "schema": {
-                  "type": "string",
-                  "example": "max-age=15552000; includeSubDomains"
-                }
-              },
-              "X-Content-Type-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "nosniff"
-                }
-              },
-              "X-DNS-Prefetch-Control": {
-                "schema": {
-                  "type": "string",
-                  "example": "off"
-                }
-              },
-              "X-Download-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "noopen"
-                }
-              },
-              "X-Frame-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "SAMEORIGIN"
-                }
-              },
-              "X-Permitted-Cross-Domain-Policies": {
-                "schema": {
-                  "type": "string",
-                  "example": "none"
-                }
-              },
-              "X-XSS-Protection": {
-                "schema": {
-                  "type": "integer",
-                  "example": "0"
-                }
-              },
-              "access-control-allow-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "*"
-                }
-              },
-              "x-ratelimit-limit": {
-                "schema": {
-                  "type": "integer",
-                  "example": "10"
-                }
-              },
-              "x-ratelimit-remaining": {
-                "schema": {
-                  "type": "integer",
-                  "example": "9"
-                }
-              },
-              "x-ratelimit-reset": {
-                "schema": {
-                  "type": "integer",
-                  "example": "1"
-                }
-              },
-              "content-type": {
-                "schema": {
-                  "type": "string",
-                  "example": "application/json; charset=utf-8"
-                }
-              },
-              "etag": {
-                "schema": {
-                  "type": "string",
-                  "example": "\"V9nuaQ+yNs0LwH6BELKUuPGNQS8=\""
-                }
-              },
-              "x-request-id": {
-                "schema": {
-                  "type": "string",
-                  "example": "lOE9QSqSE0xeLC3WEin3qx2mrJAiklii"
-                }
-              },
-              "x-pandabase-version": {
-                "schema": {
-                  "type": "string",
-                  "example": "2024-09-03"
-                }
-              },
-              "content-length": {
-                "schema": {
-                  "type": "integer",
-                  "example": "97"
-                }
-              },
-              "Date": {
-                "schema": {
-                  "type": "string",
-                  "example": "Tue, 03 Sep 2024 17:26:28 GMT"
-                }
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string",
-                  "example": "keep-alive"
-                }
-              },
-              "Keep-Alive": {
-                "schema": {
-                  "type": "string",
-                  "example": "timeout=72"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "statusCode": 400,
-                  "message": "The phone number you've provided is invalid.",
-                  "error": "BAD_REQUEST"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/onboarding/verify-phone/confirm": {
-      "post": {
-        "tags": [
-          "Onboarding"
-        ],
-        "summary": "Confirm Phone Verification",
-        "description": "This route is used to verify the phone number provided during the `REQUEST_PHONE_VERIFICATION` intent. It is a highly sensitive endpoint and is subject to strict rate limits. Upon successful verification of the phone number, it returns a `confirmationToken` in the response.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "otp": ""
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "example": "{{$guid}}"
-          },
-          {
-            "name": "verificationToken",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/users/onboarding/confirm": {
-      "post": {
-        "tags": [
-          "Onboarding"
-        ],
-        "summary": "Complete Onboarding",
-        "description": "This route is the final step in the onboarding process. Once the request is successful, it means the user has been successfully created on our platform and can start using their account without any issues.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "first_name": "",
-                  "last_name": ""
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "example": "{{$guid}}"
-          },
-          {
-            "name": "confirmationToken",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/users/auth/login": {
-      "post": {
-        "tags": [
-          "Log In"
-        ],
-        "summary": "Request magic link",
-        "description": "This route is the final step in the onboarding process. Once the request is successful, it means the user has been successfully created on our platform and can start using their account without any issues.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "email": "john.doe@example.com"
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "example": "{{$guid}}"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/users/auth/login/confirm": {
-      "post": {
-        "tags": [
-          "Log In"
-        ],
-        "summary": "Confirm MFA",
-        "description": "This route is the final step in the onboarding process. Once the request is successful, it means the user has been successfully created on our platform and can start using their account without any issues.",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "otp": "aelpxy@protonmail.com"
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            },
-            "example": "{{$guid}}"
-          },
-          {
-            "name": "verificationToken",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/users/me": {
-      "get": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "Retrieve user",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/users": {
-      "patch": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "Update user",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
+                "required": ["amount", "currency"],
                 "properties": {
-                  "first_name": {
-                    "type": "string"
+                  "amount": {
+                    "type": "integer",
+                    "description": "Amount in cents",
+                    "example": 1000
                   },
-                  "last_name": {
-                    "type": "string"
-                  },
-                  "email": {
-                    "type": "string"
-                  },
-                  "phone": {
-                    "type": "string"
-                  },
-                  "avatar": {
+                  "currency": {
                     "type": "string",
-                    "format": "binary"
+                    "description": "Three-letter currency code",
+                    "example": "USD"
                   },
-                  "mfa": {
-                    "type": "string"
+                  "description": {
+                    "type": "string",
+                    "example": "Premium Plan"
                   },
-                  "otp": {
-                    "type": "string"
+                  "display_ui": {
+                    "type": "object",
+                    "properties": {
+                      "fields": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "example": "input"
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "username"
+                            },
+                            "display_name": {
+                              "type": "string",
+                              "example": "Your Username"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "return_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://your-site.com/success"
+                  },
+                  "cancel_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://your-site.com/cancel"
                   }
                 }
               }
             }
           }
         },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Payment created successfully",
             "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/users/confirm": {
-      "post": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "Confirm update user",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "code": ""
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "pmnt_1234567890"
+                        },
+                        "checkout_url": {
+                          "type": "string",
+                          "example": "https://pandabase.io/checkout/pmnt_xxx"
+                        },
+                        "amount": {
+                          "type": "integer",
+                          "example": 1000
+                        },
+                        "currency": {
+                          "type": "string",
+                          "example": "USD"
+                        },
+                        "status": {
+                          "type": "string",
+                          "example": "pending"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "type",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "example": "update_req"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/users/tokens": {
-      "get": {
-        "tags": [
-          "Tokens"
-        ],
-        "summary": "List all tokens",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitError"
           }
         }
       },
-      "delete": {
-        "tags": [
-          "Tokens"
-        ],
-        "summary": "Purge tokens",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/users/tokens/{id}": {
       "get": {
-        "tags": [
-          "Tokens"
-        ],
-        "summary": "Get token",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
+        "summary": "List payments",
+        "description": "Retrieve a list of payments",
+        "operationId": "listPayments",
+        "tags": ["Payments"],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Tokens"
-        ],
-        "summary": "Delete token",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/users/sessions": {
-      "get": {
-        "tags": [
-          "Sessions"
-        ],
-        "summary": "List sessions",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Sessions"
-        ],
-        "summary": "Purge tokens",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/users/sessions/current": {
-      "get": {
-        "tags": [
-          "Sessions"
-        ],
-        "summary": "Get current session",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/users/sessions/{id}": {
-      "get": {
-        "tags": [
-          "Sessions"
-        ],
-        "summary": "Get session",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Sessions"
-        ],
-        "summary": "Delete session",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/payouts/{id}": {
-      "get": {
-        "tags": [
-          "Payouts"
-        ],
-        "summary": "Get payout information",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/payouts": {
-      "get": {
-        "tags": [
-          "Payouts"
-        ],
-        "summary": "List payouts",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "pageSize",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            },
-            "example": "10"
+            "$ref": "#/components/parameters/StorefrontId"
           },
           {
             "name": "page",
             "in": "query",
             "schema": {
-              "type": "integer"
-            },
-            "example": "1"
+              "type": "integer",
+              "default": 1
+            }
           },
           {
-            "name": "filter.status",
+            "name": "page_size",
             "in": "query",
             "schema": {
-              "type": "string"
-            },
-            "example": "paid"
+              "type": "integer",
+              "default": 10,
+              "maximum": 100
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Payments retrieved successfully",
             "content": {
-              "application/json": {}
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "payments": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Payment"
+                          }
+                        },
+                        "meta": {
+                          "type": "object",
+                          "properties": {
+                            "page": {
+                              "type": "integer",
+                              "example": 1
+                            },
+                            "page_size": {
+                              "type": "integer",
+                              "example": 10
+                            },
+                            "total": {
+                              "type": "integer",
+                              "example": 45
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitError"
+          }
+        }
+      }
+    },
+    "/payments/{id}": {
+      "get": {
+        "summary": "Get a payment",
+        "description": "Retrieve details of a specific payment",
+        "operationId": "getPayment",
+        "tags": ["Payments"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/StorefrontId"
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Payment ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Payment"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitError"
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "summary": "List products",
+        "description": "Retrieve a list of products",
+        "operationId": "listProducts",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/StorefrontId"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Products retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "products": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Product"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitError"
           }
         }
       },
       "post": {
-        "tags": [
-          "Payouts"
+        "summary": "Create a product",
+        "description": "Create a new product",
+        "operationId": "createProduct",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/StorefrontId"
+          }
         ],
-        "summary": "Create payout",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "example": {
-                  "bank_id": "bnk_id",
-                  "amount": 2000
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/analytics": {
-      "get": {
-        "tags": [
-          "Analytics"
-        ],
-        "summary": "Get combined analytics",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "days",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            },
-            "example": "7"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{id}/analytics": {
-      "get": {
-        "tags": [
-          "Analytics"
-        ],
-        "summary": "Get shop analytics",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "days",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            },
-            "example": "7"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops": {
-      "get": {
-        "tags": [
-          "Shops"
-        ],
-        "summary": "List shops",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Shops"
-        ],
-        "summary": "Create shop",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
+                "required": ["name", "price", "currency"],
                 "properties": {
-                  "image": {
+                  "name": {
                     "type": "string",
-                    "format": "binary"
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "Steam"
-                  },
-                  "handle": {
-                    "type": "string",
-                    "example": "steam"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "Steam is the ultimate destination for playing, discussing, and creating games."
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{id}": {
-      "get": {
-        "tags": [
-          "Shops"
-        ],
-        "summary": "Get shop",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Shops"
-        ],
-        "summary": "Update shop",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "image": {
-                    "type": "string",
-                    "format": "binary"
-                  },
-                  "title": {
-                    "type": "string",
-                    "example": "Steam"
-                  },
-                  "handle": {
-                    "type": "string",
-                    "example": "steam"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "Steam is the ultimate destination for playing, discussing, and creating games."
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Shops"
-        ],
-        "summary": "Delete shop",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shop_id}/products/{id}": {
-      "get": {
-        "tags": [
-          "Products"
-        ],
-        "summary": "Get product",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Products"
-        ],
-        "summary": "Delete product",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shop_id}/products": {
-      "post": {
-        "tags": [
-          "Products"
-        ],
-        "summary": "Create product",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "type": "string",
-                    "example": "Steam Giftcard"
-                  },
-                  "subtitle": {
-                    "type": "string",
-                    "example": "Steam Giftcard"
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "Steam Gift Cards work just like gift certificates, which can be redeemed on Steam for the purchase of games, software, hardware, and any other item."
-                  },
-                  "handle": {
-                    "type": "string",
-                    "example": "steam-giftcard"
+                    "example": "Premium Plan"
                   },
                   "price": {
                     "type": "integer",
-                    "example": "500"
+                    "example": 2999
                   },
                   "currency": {
                     "type": "string",
                     "example": "USD"
                   },
-                  "tags": {
-                    "type": "string",
-                    "example": "Giftcard, Steam Giftcard"
-                  },
-                  "images": {
-                    "type": "string",
-                    "format": "binary"
-                  },
-                  "type": {
-                    "type": "string",
-                    "example": "SERIAL, SERVICE, ONE_TIME, PHYSICAL, SUBSCRIPTION, LICENSE"
-                  },
-                  "message": {
-                    "type": "string",
-                    "description": "Only works if type is set to SERVICE"
-                  },
-                  "serials": {
-                    "type": "string",
-                    "description": "Only works if type is set to SERIAL",
-                    "example": "i2K5L&eTo%Eve9, tuzC&!9YcE77v8, Y3XUXi@aQrt96a, &K7C83mfCXPiD9, bxymLh^bEYCUi3"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "integer"
-            },
-            "required": true,
-            "example": "1750400237707513802"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Products"
-        ],
-        "summary": "List products",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Products"
-        ],
-        "summary": "Update product",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "type": "string"
-                  },
-                  "subtitle": {
-                    "type": "string"
-                  },
                   "description": {
                     "type": "string"
                   },
-                  "price": {
-                    "type": "string"
-                  },
-                  "currency": {
-                    "type": "string"
-                  },
-                  "tags": {
-                    "type": "string"
-                  },
-                  "images": {
-                    "type": "string",
-                    "format": "binary"
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
             }
           }
         },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
         "responses": {
-          "200": {
-            "description": "Successful response",
+          "201": {
+            "description": "Product created successfully",
             "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shop_id}/categories": {
-      "post": {
-        "tags": [
-          "Categories"
-        ],
-        "summary": "Create category",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "name": "",
-                  "handle": "",
-                  "products": [
-                    "prd_xxx",
-                    "prd_xxx"
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Categories"
-        ],
-        "summary": "List categories",
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shop_id}/categories/{id}": {
-      "get": {
-        "tags": [
-          "Categories"
-        ],
-        "summary": "Get category",
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Categories"
-        ],
-        "summary": "Create category",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "name": "",
-                  "handle": "",
-                  "products": [
-                    "prd_xxx",
-                    "prd_xxx"
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Categories"
-        ],
-        "summary": "Delete category",
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shop_id}/refunds/{id}": {
-      "get": {
-        "tags": [
-          "Refunds"
-        ],
-        "summary": "Retrieve refund",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Refunds"
-        ],
-        "summary": "Create refund",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "reason": "requested_by_customer"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shop_id}/refunds": {
-      "get": {
-        "tags": [
-          "Refunds"
-        ],
-        "summary": "List refunds",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shop_id}/disputes": {
-      "get": {
-        "tags": [
-          "Disputes"
-        ],
-        "summary": "List all disputes",
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shop_id}/disputes/{id}": {
-      "get": {
-        "tags": [
-          "Disputes"
-        ],
-        "summary": "Retrieve dispute",
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Disputes"
-        ],
-        "summary": "Update dispute",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "activity_log": {},
-                  "customer_communication": "",
-                  "submit": false
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shop_id}/carts/{id}": {
-      "get": {
-        "tags": [
-          "Carts"
-        ],
-        "summary": "Get cart",
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Carts"
-        ],
-        "summary": "Update cart",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "customer": "aelpxy@pm.me",
-                  "coupon": "Summer Sale 2025",
-                  "line_items": [
-                    {
-                      "id": "prd_xxx",
-                      "quantity": 10
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
                     },
-                    {
-                      "id": "prd_xxx",
-                      "quantity": 10
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Carts"
-        ],
-        "summary": "Abandon cart",
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shop_id}/carts": {
-      "post": {
-        "tags": [
-          "Carts"
-        ],
-        "summary": "Create cart",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "line_items": [
-                    {
-                      "id": "prd_xxx",
-                      "quantity": 10
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shop_id}/team/members": {
-      "get": {
-        "tags": [
-          "Team"
-        ],
-        "summary": "List members",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "integer"
-            },
-            "required": true,
-            "example": "1727362032464875327"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Team"
-        ],
-        "summary": "Invite member",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "email": "",
-                  "role": "Admin"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "integer"
-            },
-            "required": true,
-            "example": "1727362032464875327"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shop_id}/team/members/{id}": {
-      "patch": {
-        "tags": [
-          "Team"
-        ],
-        "summary": "Update member",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "role": ""
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Team"
-        ],
-        "summary": "Remove member",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shop_id}/webhooks": {
-      "get": {
-        "tags": [
-          "Webhooks"
-        ],
-        "summary": "List webhooks",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Webhooks"
-        ],
-        "summary": "Create webhook",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "url": "https://webhooks.pandabase.io",
-                  "events": []
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "Webhooks"
-        ],
-        "summary": "Update webhook",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "example": {
-                  "url": "https://webhooks.pandabase.io",
-                  "events": [],
-                  "active": false
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shop_id}/webhooks/{id}": {
-      "get": {
-        "tags": [
-          "Webhooks"
-        ],
-        "summary": "Retrieve webhook",
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Webhooks"
-        ],
-        "summary": "Delete webhook",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {}
-            }
-          }
-        }
-      }
-    },
-    "/public/shops/{id}": {
-      "get": {
-        "tags": [
-          "Public"
-        ],
-        "summary": "Retrieve shop",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "example": "shp_eTBvhtqazx3swzeK"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "headers": {
-              "Date": {
-                "schema": {
-                  "type": "string",
-                  "example": "Wed, 04 Sep 2024 16:29:45 GMT"
-                }
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string",
-                  "example": "application/json; charset=utf-8"
-                }
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer",
-                  "example": "272"
-                }
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string",
-                  "example": "keep-alive"
-                }
-              },
-              "Content-Security-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                }
-              },
-              "Cross-Origin-Opener-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Cross-Origin-Resource-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Origin-Agent-Cluster": {
-                "schema": {
-                  "type": "string",
-                  "example": "?1"
-                }
-              },
-              "Referrer-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "no-referrer"
-                }
-              },
-              "Strict-Transport-Security": {
-                "schema": {
-                  "type": "string",
-                  "example": "max-age=15552000; includeSubDomains"
-                }
-              },
-              "X-Content-Type-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "nosniff"
-                }
-              },
-              "X-DNS-Prefetch-Control": {
-                "schema": {
-                  "type": "string",
-                  "example": "off"
-                }
-              },
-              "X-Download-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "noopen"
-                }
-              },
-              "X-Frame-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "SAMEORIGIN"
-                }
-              },
-              "X-Permitted-Cross-Domain-Policies": {
-                "schema": {
-                  "type": "string",
-                  "example": "none"
-                }
-              },
-              "X-XSS-Protection": {
-                "schema": {
-                  "type": "integer",
-                  "example": "0"
-                }
-              },
-              "access-control-allow-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "*"
-                }
-              },
-              "x-ratelimit-limit": {
-                "schema": {
-                  "type": "integer",
-                  "example": "100"
-                }
-              },
-              "x-ratelimit-remaining": {
-                "schema": {
-                  "type": "integer",
-                  "example": "99"
-                }
-              },
-              "x-ratelimit-reset": {
-                "schema": {
-                  "type": "integer",
-                  "example": "1"
-                }
-              },
-              "etag": {
-                "schema": {
-                  "type": "string",
-                  "example": "\"+Q1/qWRaFq5qX+82KgxEgV562go=\""
-                }
-              },
-              "x-request-id": {
-                "schema": {
-                  "type": "string",
-                  "example": "YQ9gySkiuzsSbQx8"
-                }
-              },
-              "x-pandabase-release": {
-                "schema": {
-                  "type": "string",
-                  "example": "2024-08-12"
-                }
-              },
-              "x-pandabase-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "prod2-mia"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "statusCode": 200,
-                  "message": "OK",
-                  "payload": {
-                    "shop": {
-                      "id": "shp_xxx",
-                      "image_hash": "shops/shp_xxx/favicons/fav_xxx.png",
-                      "title": "Shop Title",
-                      "description": "Shop description",
-                      "categories": [],
-                      "version": "V1"
+                    "data": {
+                      "$ref": "#/components/schemas/Product"
                     }
                   }
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitError"
           }
         }
       }
     },
-    "/public/shops/{id}/categories": {
+    "/products/{id}": {
       "get": {
-        "tags": [
-          "Public"
-        ],
-        "summary": "Get available categories",
+        "summary": "Get a product",
+        "description": "Retrieve details of a specific product",
+        "operationId": "getProduct",
+        "tags": ["Products"],
         "parameters": [
+          {
+            "$ref": "#/components/parameters/StorefrontId"
+          },
           {
             "name": "id",
             "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
-            },
-            "required": true,
-            "example": "shp_xxx"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "headers": {
-              "Date": {
-                "schema": {
-                  "type": "string",
-                  "example": "Wed, 04 Sep 2024 16:31:04 GMT"
-                }
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string",
-                  "example": "application/json; charset=utf-8"
-                }
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer",
-                  "example": "124"
-                }
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string",
-                  "example": "keep-alive"
-                }
-              },
-              "Content-Security-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                }
-              },
-              "Cross-Origin-Opener-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Cross-Origin-Resource-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Origin-Agent-Cluster": {
-                "schema": {
-                  "type": "string",
-                  "example": "?1"
-                }
-              },
-              "Referrer-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "no-referrer"
-                }
-              },
-              "Strict-Transport-Security": {
-                "schema": {
-                  "type": "string",
-                  "example": "max-age=15552000; includeSubDomains"
-                }
-              },
-              "X-Content-Type-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "nosniff"
-                }
-              },
-              "X-DNS-Prefetch-Control": {
-                "schema": {
-                  "type": "string",
-                  "example": "off"
-                }
-              },
-              "X-Download-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "noopen"
-                }
-              },
-              "X-Frame-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "SAMEORIGIN"
-                }
-              },
-              "X-Permitted-Cross-Domain-Policies": {
-                "schema": {
-                  "type": "string",
-                  "example": "none"
-                }
-              },
-              "X-XSS-Protection": {
-                "schema": {
-                  "type": "integer",
-                  "example": "0"
-                }
-              },
-              "access-control-allow-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "*"
-                }
-              },
-              "x-ratelimit-limit": {
-                "schema": {
-                  "type": "integer",
-                  "example": "100"
-                }
-              },
-              "x-ratelimit-remaining": {
-                "schema": {
-                  "type": "integer",
-                  "example": "99"
-                }
-              },
-              "x-ratelimit-reset": {
-                "schema": {
-                  "type": "integer",
-                  "example": "1"
-                }
-              },
-              "etag": {
-                "schema": {
-                  "type": "string",
-                  "example": "\"4qZfk5BScFCmxLiLNdL22RJsHkM=\""
-                }
-              },
-              "x-request-id": {
-                "schema": {
-                  "type": "string",
-                  "example": "feFCMUo4BxtekoHi"
-                }
-              },
-              "x-pandabase-release": {
-                "schema": {
-                  "type": "string",
-                  "example": "2024-08-12"
-                }
-              },
-              "x-pandabase-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "prod2-mia"
-                }
-              }
-            },
+            "description": "Product retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "statusCode": 200,
-                  "message": "OK",
-                  "payload": {
-                    "categories": [
-                      {
-                        "id": "ctg_AlPz4AtrQM",
-                        "name": "Gift Card",
-                        "handle": "giftcards"
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/Product"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "summary": "List orders",
+        "description": "Retrieve a list of orders",
+        "operationId": "listOrders",
+        "tags": ["Orders"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/StorefrontId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Orders retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "orders": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Order"
+                          }
+                        }
                       }
-                    ]
+                    }
                   }
                 }
               }
@@ -3098,938 +850,451 @@
         }
       }
     },
-    "/public/shops/{id}/products": {
+    "/coupons": {
       "get": {
-        "tags": [
-          "Public"
-        ],
-        "summary": "List shop products",
+        "summary": "List coupons",
+        "description": "Retrieve a list of coupons",
+        "operationId": "listCoupons",
+        "tags": ["Coupons"],
         "parameters": [
+          {
+            "$ref": "#/components/parameters/StorefrontId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Coupons retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "coupons": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Coupon"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{productId}/licenses": {
+      "get": {
+        "summary": "List licenses",
+        "description": "Retrieve a list of licenses for a product. Only available if you use managed licenses.",
+        "operationId": "listLicenses",
+        "tags": ["Licenses"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/StorefrontId"
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Product ID"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["active", "suspended", "expired", "revoked"]
+            },
+            "description": "Filter licenses by status"
+          },
           {
             "name": "page",
             "in": "query",
             "schema": {
-              "type": "integer"
-            },
-            "example": "1"
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            },
-            "example": "10"
-          },
-          {
-            "name": "filter.price",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            },
-            "example": "5000"
-          },
-          {
-            "name": "filter.categories",
-            "in": "query",
-            "schema": {
-              "type": "string"
+              "type": "integer",
+              "default": 1
             }
           },
           {
-            "name": "filter.type",
+            "name": "page_size",
             "in": "query",
             "schema": {
-              "type": "string"
-            },
-            "example": "SERIAL"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "example": "shp_xxx"
+              "type": "integer",
+              "default": 10
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "headers": {
-              "Date": {
-                "schema": {
-                  "type": "string",
-                  "example": "Wed, 04 Sep 2024 16:31:55 GMT"
-                }
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string",
-                  "example": "application/json; charset=utf-8"
-                }
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer",
-                  "example": "1907"
-                }
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string",
-                  "example": "keep-alive"
-                }
-              },
-              "Content-Security-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                }
-              },
-              "Cross-Origin-Opener-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Cross-Origin-Resource-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Origin-Agent-Cluster": {
-                "schema": {
-                  "type": "string",
-                  "example": "?1"
-                }
-              },
-              "Referrer-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "no-referrer"
-                }
-              },
-              "Strict-Transport-Security": {
-                "schema": {
-                  "type": "string",
-                  "example": "max-age=15552000; includeSubDomains"
-                }
-              },
-              "X-Content-Type-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "nosniff"
-                }
-              },
-              "X-DNS-Prefetch-Control": {
-                "schema": {
-                  "type": "string",
-                  "example": "off"
-                }
-              },
-              "X-Download-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "noopen"
-                }
-              },
-              "X-Frame-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "SAMEORIGIN"
-                }
-              },
-              "X-Permitted-Cross-Domain-Policies": {
-                "schema": {
-                  "type": "string",
-                  "example": "none"
-                }
-              },
-              "X-XSS-Protection": {
-                "schema": {
-                  "type": "integer",
-                  "example": "0"
-                }
-              },
-              "access-control-allow-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "*"
-                }
-              },
-              "x-ratelimit-limit": {
-                "schema": {
-                  "type": "integer",
-                  "example": "100"
-                }
-              },
-              "x-ratelimit-remaining": {
-                "schema": {
-                  "type": "integer",
-                  "example": "99"
-                }
-              },
-              "x-ratelimit-reset": {
-                "schema": {
-                  "type": "integer",
-                  "example": "1"
-                }
-              },
-              "etag": {
-                "schema": {
-                  "type": "string",
-                  "example": "\"2J1IgSCJFxzeT68QH/AxpYiMays=\""
-                }
-              },
-              "x-request-id": {
-                "schema": {
-                  "type": "string",
-                  "example": "rokX8Oxv5AU8updM"
-                }
-              },
-              "x-pandabase-release": {
-                "schema": {
-                  "type": "string",
-                  "example": "2024-04-20"
-                }
-              },
-              "x-pandabase-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "prod1-mia"
-                }
-              }
-            },
+            "description": "Licenses retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "statusCode": 200,
-                  "message": "OK",
-                  "payload": {
-                    "products": [
-                      {
-                        "id": "prd_XtG7Qn2vL9b1CKzF",
-                        "title": "QuantumWave AI Assistant",
-                        "subtitle": "QuantumWave",
-                        "description": "Unlock the full potential of your digital workspace with the QuantumWave AI Assistant. This advanced tool offers predictive analytics, real-time collaboration enhancements, and seamless integration with major productivity suites. Join our community and get the most out of your AI assistant! [Join now](https://discord.gg/QuantumWaveAI)",
-                        "handle": "quantumwave",
-                        "price": 1999,
-                        "images": [
-                          "shops/shp_qwE5dJHhK4rL0opA/products/prd_XtG7Qn2vL9b1CKzF/img_1.png",
-                          "shops/shp_qwE5dJHhK4rL0opA/products/prd_XtG7Qn2vL9b1CKzF/img_2.png"
-                        ],
-                        "in_stock": true,
-                        "currency": "USD",
-                        "type": "SERIAL",
-                        "version": "V1",
-                        "categories": []
-                      },
-                      {
-                        "id": "prd_JmF3dVeD5kT7L1oR",
-                        "title": "NebulaDrive Cloud Storage",
-                        "subtitle": "NebulaDrive",
-                        "description": "Experience unmatched cloud storage with NebulaDrive. Offering secure, scalable, and ultra-fast data access, NebulaDrive ensures your files are always within reach. Get started with our special offer and enjoy premium features at no extra cost! [Join now](https://discord.gg/NebulaDriveCloud)",
-                        "handle": "nebuladrive",
-                        "price": 2999,
-                        "images": [
-                          "shops/shp_nD8kU4zY6pH1KlO9/products/prd_JmF3dVeD5kT7L1oR/img_1.png",
-                          "shops/shp_nD8kU4zY6pH1KlO9/products/prd_JmF3dVeD5kT7L1oR/img_2.png"
-                        ],
-                        "in_stock": true,
-                        "currency": "USD",
-                        "type": "SUBSCRIPTION",
-                        "version": "V1",
-                        "categories": []
-                      },
-                      {
-                        "id": "prd_LcB7Xe4fQ9rN2oVY",
-                        "title": "AuroraTech VR Headset",
-                        "subtitle": "AuroraTech",
-                        "description": "Immerse yourself in a new reality with the AuroraTech VR Headset. Designed for optimal comfort and cutting-edge visuals, this headset brings your virtual experiences to life. Grab yours now and dive into a world of endless possibilities! [Join now](https://discord.gg/AuroraTechVR)",
-                        "handle": "auroratech",
-                        "price": 499,
-                        "images": [
-                          "shops/shp_atR2oLpD1mC5KbV7/products/prd_LcB7Xe4fQ9rN2oVY/img_1.png",
-                          "shops/shp_atR2oLpD1mC5KbV7/products/prd_LcB7Xe4fQ9rN2oVY/img_2.png"
-                        ],
-                        "in_stock": true,
-                        "currency": "USD",
-                        "type": "PHYSICAL",
-                        "version": "V1",
-                        "categories": []
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "licenses": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/License"
+                          }
+                        },
+                        "meta": {
+                          "type": "object",
+                          "properties": {
+                            "page": {
+                              "type": "integer",
+                              "example": 1
+                            },
+                            "page_size": {
+                              "type": "integer",
+                              "example": 10
+                            },
+                            "total": {
+                              "type": "integer",
+                              "example": 25
+                            }
+                          }
+                        }
                       }
-                    ],
-                    "meta": {
-                      "total": 3,
-                      "page": 1,
-                      "pageSize": 10,
-                      "totalPages": 1
                     }
                   }
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitError"
           }
         }
-      }
-    },
-    "/public/shops/{shop_id}/products/{id}": {
-      "get": {
-        "tags": [
-          "Public"
-        ],
-        "summary": "Retrieve Product",
+      },
+      "post": {
+        "summary": "Create a license",
+        "description": "Create a new license for a product",
+        "operationId": "createLicense",
+        "tags": ["Licenses"],
         "parameters": [
           {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "example": "shp_eTBvhtqazx3swzeK"
+            "$ref": "#/components/parameters/StorefrontId"
           },
           {
-            "name": "id",
+            "name": "productId",
             "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
-            },
-            "required": true,
-            "example": "prd_uMhXE4adX64gUQot"
+            }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "headers": {
-              "Date": {
-                "schema": {
-                  "type": "string",
-                  "example": "Thu, 05 Sep 2024 16:39:01 GMT"
-                }
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string",
-                  "example": "application/json; charset=utf-8"
-                }
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer",
-                  "example": "684"
-                }
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string",
-                  "example": "keep-alive"
-                }
-              },
-              "Content-Security-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                }
-              },
-              "Cross-Origin-Opener-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Cross-Origin-Resource-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Origin-Agent-Cluster": {
-                "schema": {
-                  "type": "string",
-                  "example": "?1"
-                }
-              },
-              "Referrer-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "no-referrer"
-                }
-              },
-              "Strict-Transport-Security": {
-                "schema": {
-                  "type": "string",
-                  "example": "max-age=15552000; includeSubDomains"
-                }
-              },
-              "X-Content-Type-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "nosniff"
-                }
-              },
-              "X-DNS-Prefetch-Control": {
-                "schema": {
-                  "type": "string",
-                  "example": "off"
-                }
-              },
-              "X-Download-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "noopen"
-                }
-              },
-              "X-Frame-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "SAMEORIGIN"
-                }
-              },
-              "X-Permitted-Cross-Domain-Policies": {
-                "schema": {
-                  "type": "string",
-                  "example": "none"
-                }
-              },
-              "X-XSS-Protection": {
-                "schema": {
-                  "type": "integer",
-                  "example": "0"
-                }
-              },
-              "access-control-allow-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "*"
-                }
-              },
-              "x-ratelimit-limit": {
-                "schema": {
-                  "type": "integer",
-                  "example": "100"
-                }
-              },
-              "x-ratelimit-remaining": {
-                "schema": {
-                  "type": "integer",
-                  "example": "99"
-                }
-              },
-              "x-ratelimit-reset": {
-                "schema": {
-                  "type": "integer",
-                  "example": "1"
-                }
-              },
-              "etag": {
-                "schema": {
-                  "type": "string",
-                  "example": "\"3JKUdPmM4n4TZNGoSwGNapW/dzA=\""
-                }
-              },
-              "x-request-id": {
-                "schema": {
-                  "type": "string",
-                  "example": "RaWSFHgLirwxfz1U"
-                }
-              },
-              "x-pandabase-release": {
-                "schema": {
-                  "type": "string",
-                  "example": "2024-08-12"
-                }
-              },
-              "x-pandabase-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "prod2-mia"
-                }
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "statusCode": 200,
-                  "message": "OK",
-                  "payload": {
-                    "product": {
-                      "id": "prd_uMhXE4adX64gUQot",
-                      "title": "AltVault Basic Key",
-                      "subtitle": "altvault",
-                      "description": "Purchase an Advanced AltVault License key to redeem the advanced plan on your #1 reliable source for alts. Join the Discord to redeem your key. https://discord.gg/FVRrpk86z2",
-                      "handle": "altvault",
-                      "price": 499,
-                      "images": [
-                        "shops/shp_eTBvhtqazx3swzeK/products/prd_uMhXE4adX64gUQot/img_xUBIjbYBAGUyDjZGoEEKzkLJlKW25DrA.png",
-                        "shops/shp_eTBvhtqazx3swzeK/products/prd_uMhXE4adX64gUQot/img_6CTnuHYMpq4P7YZtbk9k2HhsMjboHlly.png"
-                      ],
-                      "tags": [
-                        "altvault"
-                      ],
-                      "in_stock": true,
-                      "is_draft": false,
-                      "currency": "USD",
-                      "type": "SERIAL",
-                      "categories": [],
-                      "reviews": []
-                    }
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "customer_id": {
+                    "type": "string",
+                    "example": "cust_123456"
+                  },
+                  "key": {
+                    "type": "string",
+                    "description": "Custom license key (optional, will be auto-generated if not provided)",
+                    "example": "CUSTOM-KEY-HERE"
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Custom metadata"
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Expiration date (optional, null for permanent)",
+                    "nullable": true
                   }
                 }
               }
             }
           }
-        }
-      }
-    },
-    "/public/shops/{shop_id}/products/{id}/reviews": {
-      "get": {
-        "tags": [
-          "Public"
-        ],
-        "summary": "Retrieve reviews",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            },
-            "example": "1"
-          },
-          {
-            "name": "pageSize",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            },
-            "example": "10"
-          },
-          {
-            "name": "shop_id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "example": "shp_eTBvhtqazx3swzeK"
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            },
-            "required": true,
-            "example": "prd_uMhXE4adX64gUQot"
-          }
-        ],
+        },
         "responses": {
-          "200": {
-            "description": "OK",
-            "headers": {
-              "Date": {
-                "schema": {
-                  "type": "string",
-                  "example": "Thu, 05 Sep 2024 16:39:01 GMT"
-                }
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string",
-                  "example": "application/json; charset=utf-8"
-                }
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer",
-                  "example": "684"
-                }
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string",
-                  "example": "keep-alive"
-                }
-              },
-              "Content-Security-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                }
-              },
-              "Cross-Origin-Opener-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Cross-Origin-Resource-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Origin-Agent-Cluster": {
-                "schema": {
-                  "type": "string",
-                  "example": "?1"
-                }
-              },
-              "Referrer-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "no-referrer"
-                }
-              },
-              "Strict-Transport-Security": {
-                "schema": {
-                  "type": "string",
-                  "example": "max-age=15552000; includeSubDomains"
-                }
-              },
-              "X-Content-Type-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "nosniff"
-                }
-              },
-              "X-DNS-Prefetch-Control": {
-                "schema": {
-                  "type": "string",
-                  "example": "off"
-                }
-              },
-              "X-Download-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "noopen"
-                }
-              },
-              "X-Frame-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "SAMEORIGIN"
-                }
-              },
-              "X-Permitted-Cross-Domain-Policies": {
-                "schema": {
-                  "type": "string",
-                  "example": "none"
-                }
-              },
-              "X-XSS-Protection": {
-                "schema": {
-                  "type": "integer",
-                  "example": "0"
-                }
-              },
-              "access-control-allow-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "*"
-                }
-              },
-              "x-ratelimit-limit": {
-                "schema": {
-                  "type": "integer",
-                  "example": "100"
-                }
-              },
-              "x-ratelimit-remaining": {
-                "schema": {
-                  "type": "integer",
-                  "example": "99"
-                }
-              },
-              "x-ratelimit-reset": {
-                "schema": {
-                  "type": "integer",
-                  "example": "1"
-                }
-              },
-              "etag": {
-                "schema": {
-                  "type": "string",
-                  "example": "\"3JKUdPmM4n4TZNGoSwGNapW/dzA=\""
-                }
-              },
-              "x-request-id": {
-                "schema": {
-                  "type": "string",
-                  "example": "RaWSFHgLirwxfz1U"
-                }
-              },
-              "x-pandabase-release": {
-                "schema": {
-                  "type": "string",
-                  "example": "2024-08-12"
-                }
-              },
-              "x-pandabase-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "prod2-mia"
-                }
-              }
-            },
+          "201": {
+            "description": "License created successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "statusCode": 200,
-                  "message": "OK",
-                  "payload": {
-                    "product": {
-                      "id": "prd_uMhXE4adX64gUQot",
-                      "title": "AltVault Basic Key",
-                      "subtitle": "altvault",
-                      "description": "Purchase an Advanced AltVault License key to redeem the advanced plan on your #1 reliable source for alts. Join the Discord to redeem your key. https://discord.gg/FVRrpk86z2",
-                      "handle": "altvault",
-                      "price": 499,
-                      "images": [
-                        "shops/shp_eTBvhtqazx3swzeK/products/prd_uMhXE4adX64gUQot/img_xUBIjbYBAGUyDjZGoEEKzkLJlKW25DrA.png",
-                        "shops/shp_eTBvhtqazx3swzeK/products/prd_uMhXE4adX64gUQot/img_6CTnuHYMpq4P7YZtbk9k2HhsMjboHlly.png"
-                      ],
-                      "tags": [
-                        "altvault"
-                      ],
-                      "in_stock": true,
-                      "is_draft": false,
-                      "currency": "USD",
-                      "type": "SERIAL",
-                      "categories": [],
-                      "reviews": []
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/License"
                     }
                   }
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimitError"
           }
         }
       }
     },
-    "/public/shops/{id}/products/search": {
+    "/products/{productId}/licenses/{licenseId}": {
       "get": {
-        "tags": [
-          "Public"
-        ],
-        "summary": "Search shop",
+        "summary": "Get a license",
+        "description": "Retrieve details of a specific license",
+        "operationId": "getLicense",
+        "tags": ["Licenses"],
         "parameters": [
           {
-            "name": "query",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "example": "basic"
+            "$ref": "#/components/parameters/StorefrontId"
           },
           {
-            "name": "id",
+            "name": "productId",
             "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
-            },
+            }
+          },
+          {
+            "name": "licenseId",
+            "in": "path",
             "required": true,
-            "example": "shp_xxx"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "headers": {
-              "Date": {
-                "schema": {
-                  "type": "string",
-                  "example": "Wed, 04 Sep 2024 16:34:31 GMT"
-                }
-              },
-              "Content-Type": {
-                "schema": {
-                  "type": "string",
-                  "example": "application/json; charset=utf-8"
-                }
-              },
-              "Content-Length": {
-                "schema": {
-                  "type": "integer",
-                  "example": "652"
-                }
-              },
-              "Connection": {
-                "schema": {
-                  "type": "string",
-                  "example": "keep-alive"
-                }
-              },
-              "Content-Security-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                }
-              },
-              "Cross-Origin-Opener-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Cross-Origin-Resource-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "same-origin"
-                }
-              },
-              "Origin-Agent-Cluster": {
-                "schema": {
-                  "type": "string",
-                  "example": "?1"
-                }
-              },
-              "Referrer-Policy": {
-                "schema": {
-                  "type": "string",
-                  "example": "no-referrer"
-                }
-              },
-              "Strict-Transport-Security": {
-                "schema": {
-                  "type": "string",
-                  "example": "max-age=15552000; includeSubDomains"
-                }
-              },
-              "X-Content-Type-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "nosniff"
-                }
-              },
-              "X-DNS-Prefetch-Control": {
-                "schema": {
-                  "type": "string",
-                  "example": "off"
-                }
-              },
-              "X-Download-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "noopen"
-                }
-              },
-              "X-Frame-Options": {
-                "schema": {
-                  "type": "string",
-                  "example": "SAMEORIGIN"
-                }
-              },
-              "X-Permitted-Cross-Domain-Policies": {
-                "schema": {
-                  "type": "string",
-                  "example": "none"
-                }
-              },
-              "X-XSS-Protection": {
-                "schema": {
-                  "type": "integer",
-                  "example": "0"
-                }
-              },
-              "access-control-allow-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "*"
-                }
-              },
-              "x-ratelimit-limit": {
-                "schema": {
-                  "type": "integer",
-                  "example": "100"
-                }
-              },
-              "x-ratelimit-remaining": {
-                "schema": {
-                  "type": "integer",
-                  "example": "99"
-                }
-              },
-              "x-ratelimit-reset": {
-                "schema": {
-                  "type": "integer",
-                  "example": "1"
-                }
-              },
-              "etag": {
-                "schema": {
-                  "type": "string",
-                  "example": "\"6IM9dZIpXguf0MCm5+c6GFqYjss=\""
-                }
-              },
-              "x-request-id": {
-                "schema": {
-                  "type": "string",
-                  "example": "6kEpt69DGYaJu20V"
-                }
-              },
-              "x-pandabase-release": {
-                "schema": {
-                  "type": "string",
-                  "example": "2024-08-12"
-                }
-              },
-              "x-pandabase-origin": {
-                "schema": {
-                  "type": "string",
-                  "example": "prod2-mia"
-                }
-              }
-            },
+            "description": "License retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "statusCode": 200,
-                  "message": "OK",
-                  "payload": {
-                    "products": [
-                      {
-                        "id": "prd_uMhXE4adX64gUQot",
-                        "title": "AltVault Basic Key",
-                        "subtitle": "altvault",
-                        "description": "Purchase an Advanced AltVault License key to redeem the advanced plan on your #1 reliable source for alts. Join the Discord to redeem your key. https://discord.gg/FVRrpk86z2",
-                        "handle": "altvault",
-                        "price": 499,
-                        "images": [
-                          "shops/shp_eTBvhtqazx3swzeK/products/prd_uMhXE4adX64gUQot/img_xUBIjbYBAGUyDjZGoEEKzkLJlKW25DrA.png",
-                          "shops/shp_eTBvhtqazx3swzeK/products/prd_uMhXE4adX64gUQot/img_6CTnuHYMpq4P7YZtbk9k2HhsMjboHlly.png"
-                        ],
-                        "in_stock": true,
-                        "currency": "USD",
-                        "type": "SERIAL",
-                        "version": "V1",
-                        "categories": []
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/License"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a license",
+        "description": "Update license status or metadata",
+        "operationId": "updateLicense",
+        "tags": ["Licenses"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/StorefrontId"
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "licenseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["active", "suspended", "revoked"],
+                    "description": "Update license status"
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "expires_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "License updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/License"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Revoke a license",
+        "description": "Permanently revoke a license",
+        "operationId": "revokeLicense",
+        "tags": ["Licenses"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/StorefrontId"
+          },
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "licenseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "License revoked successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "License revoked successfully"
+                        }
                       }
-                    ]
+                    }
                   }
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundError"
           }
         }
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Payments",
+      "description": "Payment operations"
+    },
+    {
+      "name": "Products",
+      "description": "Product management"
+    },
+    {
+      "name": "Orders",
+      "description": "Order management"
+    },
+    {
+      "name": "Coupons",
+      "description": "Coupon management"
+    },
+    {
+      "name": "Licenses",
+      "description": "License management (only available with managed licenses)"
+    }
+  ]
 }

@@ -13,10 +13,10 @@ You can use the commands listed below with `curl` by providing your token.
 
 ## API Basics
 
-| Environment | URL                                | Protocols                 | Architecture |
-| ----------- | ---------------------------------- | ------------------------- | ------------ |
-| Production  | `https://api.pandabase.io`         | HTTP/1.1, HTTP/2 over TLS | REST         |
-| Sandbox     | `https://api.sandbox.pandabase.io` | HTTP/1.1, HTTP/2 over TLS | REST         |
+| Environment       | URL                                | Protocols           |
+| ----------------- | ---------------------------------- | --------------------|
+| Production        | `https://pandabase.io/api`         | HTTP/1.1-2 over TLS |
+| Preview Features  | `https://pandabase.io/api/preview` | HTTP/1.1-2 over TLS |
 
 ## Additional Information
 
@@ -43,57 +43,31 @@ errors, are encoded exclusively as JSON as well.
 API keys are necessary for authentication and API usage. Although
 account session tokens can be used, they are not recommended due to security reasons.
 
-```json
-  Authorization: Bearer <api_key>
-```
-
-### IDs
-
-Each object is assigned a unique identifier consisting of a specific prefix followed by a string of 24 alphanumeric characters. This ensures clear categorization of different object types. The prefix, typically four characters long, denotes the object type, while the subsequent string guarantees uniqueness across the entire platform.
-
-| Object           | Prefix  | Regex                    | Example                        |
-| ---------------- | ------- | ------------------------ | ------------------------------ |
-| Account          | `acc_`  | `^acc_[a-zA-Z0-9]{24}$`  | `acc_9v4m2xk1h7zq3p8y6n5r1t0w` |
-| Analytics        | `anly_` | `^anly_[a-zA-Z0-9]{24}$` | `anly_3j8f5l2g9d0c7b1n6m4v2x`  |
-| Billing Address  | `bill_` | `^bill_[a-zA-Z0-9]{24}$` | `bill_7t2w5s8q1x3v6y9p4m0n1r`  |
-| Blacklist        | `blk_`  | `^blk_[a-zA-Z0-9]{24}$`  | `blk_2k9h6f4d1s7g0l3j5n8m2p`   |
-| Cart             | `cart_` | `^cart_[a-zA-Z0-9]{24}$` | `cart_5r8t1y4u7i2o0p9a3s6d1f`  |
-| Category         | `ctgy_` | `^ctgy_[a-zA-Z0-9]{24}$` | `ctgy_1q3w5e7r9t2y4u6i8o0p`    |
-| Coupon           | `cpn_`  | `^cpn_[a-zA-Z0-9]{24}$`  | `cpn_8m2n4b6v1c3x5z7l9k0j1h`   |
-| Customer         | `cust_` | `^cust_[a-zA-Z0-9]{24}$` | `cust_6y9t2r5e8w1q4u7i0o3p`    |
-| Dispute          | `disp_` | `^disp_[a-zA-Z0-9]{24}$` | `disp_4f7g1h2j5k8l0z3x6c9v`    |
-| Event            | `evnt_` | `^evnt_[a-zA-Z0-9]{24}$` | `evnt_2s5d8f1g4h7j0k3l6z9x`    |
-| Subscription     | `sub_`  | `^sub_[a-zA-Z0-9]{24}$`  | `sub_9p2o5i8u1y4t7r0e3w6q`     |
-| Invoice          | `inv_`  | `^inv_[a-zA-Z0-9]{24}$`  | `inv_7m1n4b2v5c8x0z3l6k9j`     |
-| File             | `file_` | `^file_[a-zA-Z0-9]{24}$` | `file_3q6w9e2r5t8y1u4i7o0p`    |
-| Flag             | `flag_` | `^flag_[a-zA-Z0-9]{24}$` | `flag_1a4s7d0f3g6h9j2k5l8z`    |
-| Group            | `grup_` | `^grup_[a-zA-Z0-9]{24}$` | `grup_5x8c1v4b7n0m3j6k9l2h`    |
-| Item             | `itm_`  | `^itm_[a-zA-Z0-9]{24}$`  | `itm_8q1w4e7r0t3y6u9i2o5p`     |
-| Order            | `ordr_` | `^ordr_[a-zA-Z0-9]{24}$` | `ordr_2z5x8c1v4b7n0m3j6k9l`    |
-| Payment          | `pymt_` | `^pymt_[a-zA-Z0-9]{24}$` | `pymt_6h9j2k5l8z1x4c7v0b3n`    |
-| Payout           | `pyot_` | `^pyot_[a-zA-Z0-9]{24}$` | `pyot_9u2i5o8p1a4s7d0f3g6h`    |
-| Product          | `prod_` | `^prod_[a-zA-Z0-9]{24}$` | `prod_4t7y0u3i6o9p2a5s8d1f`    |
-| Recipient        | `rcpt_` | `^rcpt_[a-zA-Z0-9]{24}$` | `rcpt_7k0l3j6h9g2f5d8s1a4`     |
-| Refund           | `rfnd_` | `^rfnd_[a-zA-Z0-9]{24}$` | `rfnd_1m4n7b0v3c6x9z2l5k8j`    |
-| Review           | `revw_` | `^revw_[a-zA-Z0-9]{24}$` | `revw_5e8w1q4u7i0o3p6a9s2d`    |
-| Serial           | `serl_` | `^serl_[a-zA-Z0-9]{24}$` | `serl_2y5t8r1e4w7q0u3i6o9p`    |
-| Shipping Address | `ship_` | `^ship_[a-zA-Z0-9]{24}$` | `ship_8d1f4g7h0j3k6l9z2x5c`    |
-| Shop             | `shop_` | `^shop_[a-zA-Z0-9]{24}$` | `shop_3v6b9n2m5j8k1l4h7g0f`    |
-| Team Member      | `tm_`   | `^tm_[a-zA-Z0-9]{24}$`   | `tm_9p2o5i8u1y4t7r0e3w6q`      |
-| Token            | `tokn_` | `^tokn_[a-zA-Z0-9]{24}$` | `tokn_7a0s3d6f9g2h5j8k1l4z`    |
-| Transaction      | `txn_`  | `^txn_[a-zA-Z0-9]{24}$`  | `txn_1q4w7e0r3t6y9u2i5o8p`     |
-| Webhook          | `webh_` | `^webh_[a-zA-Z0-9]{24}$` | `webh_5x8c1v4b7n0m3j6k9l2h`    |
-| Request          | `req_`  | `^req_[a-zA-Z0-9]{24}$`  | `req_2a5s8d1f4g7h0j3k6l9z`     |
-| Idempotency      | `idem_` | `^idem_[a-zA-Z0-9]{24}$` | `idem_6u9i2o5p8a1s4d7f0g3h`    |
-| Transfer         | `tr_`   | `^tr_[a-zA-Z0-9]{24}$`   | `tr_9m2n5b8v1c4x7z0l3k6j`      |
-| Session          | `ses_`  | `^ses_[a-zA-Z0-9]{24}$`  | `ses_4q7w0e3r6t9y2u5i8o1p`     |
-| Image            | `img_`  | `^img_[a-zA-Z0-9]{24}$`  | `img_8k1l4z7x0c3v6b9n2m5j`     |
-| Message          | `msg_`  | `^msg_[a-zA-Z0-9]{24}$`  | `msg_3f6g9h2j5k8l1z4x7c0v`     |
-
 ### Versioning
 
-We include the current version information in the `Pandabase-Version` response header.
-Our API versioning follows a date-based structure in the format of `YYYY/MM/DD`.
+The Pandabase API uses a hybrid versioning system that combines major versions with date-based increments to ensure stability while providing continuous improvements.
+
+**How It Works:**
+
+1. **Major Versions** (v1, v2, v3): Released when there are breaking changes that require code updates
+   - Breaking changes include endpoint restructuring, renamed fields, or removed functionality
+   - Each major version is maintained separately to give you time to migrate
+   - Current version: **V3** (released December 25, 2024)
+
+2. **Date-Based Increments** (YYYY/MM/DD): Added to major versions for non-breaking updates
+   - Non-breaking changes include new features, additional fields, bug fixes, and performance improvements
+   - Format: `YYYY/MM/DD-{VERSION}` (e.g., `2024/12/25-v3`)
+   - These updates are backward compatible within the same major version
+
+**Version Header:**
+
+Every API response includes the current version in the `X-API-Version` header, allowing you to track which version you're using.
+
+**Migration Timeline:**
+
+- V1 and V2 endpoints will be available until **January 1st, 2026**
+- V3 endpoints are available now at `https://pandabase.io/api`
+- See the [changelog](/developers/changelog) for detailed version history
 
 ### Request IDs
 

@@ -37,28 +37,10 @@ The API response will include a `meta` object containing pagination information:
   The total number of pages
 </ResponseField>
 
-<ResponseField name="next_page_url" type="string" optional>
-  URL for the next page (if available)
-</ResponseField>
-
-<ResponseField name="previous_page_url" type="string" optional>
-  URL for the previous page (if available)
-</ResponseField>
-
-<ResponseField name="first_page_url" type="string" required>
-  URL for the first page
-</ResponseField>
-
-<ResponseField name="last_page_url" type="string" required>
-  URL for the last page
-</ResponseField>
-
 ## Best Practices
 
 1. Use `page` and `page_size` query parameters when making requests to list endpoints.
 2. Respect the maximum `page_size` limit of 100 items per page.
-3. Use the provided URLs in the meta object for navigation between pages.
-4. `next_page_url` or `previous_page_url` might be null.
 
 ## Limitations
 

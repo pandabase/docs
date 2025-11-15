@@ -26,8 +26,8 @@ Here's an example:
 
 ```json
 {
+  "id": "",
   "type": "payment.created",
-  "webhook_id": "",
   "data": {
     ...paymentResource
   }
@@ -36,14 +36,14 @@ Here's an example:
 
 ### Retries
 
-We retry up to 5 times, with each attempt delayed using an exponential backoff. If we receive a 200 status from your application, we mark the delivery as successful. Otherwise, if anything other than 200 is received, we try 5 times max. If it doesn't succeed after 5 attempts, we email you and mark the webhook as disabled.
+We retry up to 3 times, with each attempt delayed using an exponential backoff. If we receive a 200 status from your application, we mark the delivery as successful. Otherwise, if anything other than 200 is received, we try 3 times max. If it doesn't succeed after 3 attempts, we email you and mark the webhook as disabled.
 
 ```mermaid
 flowchart LR
     A[Start] --> B{Deliver}
     B -->|200| C[Success]
     C --> H[End]
-    B -->|!200| D{Retry < 5?}
+    B -->|!200| D{Retry < 3?}
     D -->|Yes| E[Backoff]
     E --> B
     D -->|No| F[Disable]
@@ -59,7 +59,7 @@ Webhooks can be verified to ensure they were actually sent by Pandabase and not
 by a malicious entity.
 
 To verify a webhook, you will need your webhook secret or token to confirm the
-`SHA256` HMAC signature. Check the `X-Pandabase-Signature` header in the webhook response headers.
+`SHA256` HMAC signature. Check the `X-Webhook-Signature` header in the webhook response headers.
 
 Here are several examples:
 
@@ -70,10 +70,10 @@ import crypto from "crypto";
 import { Request, Response } from "express";
 
 function validateSignature(req: Request, res: Response) {
-  if (!req.headers["x-pandabase-signature"]) return res.status(401).send();
+  if (!req.headers["x-webhook-signature"]) return res.status(401).send();
   try {
     const valid = crypto.timingSafeEqual(
-      Buffer.from(req.headers["x-pandabase-signature"] as string, "hex"),
+      Buffer.from(req.headers["x-webhook-signature"] as string, "hex"),
       Buffer.from(
         crypto
           .createHmac("sha256", "wh_")
@@ -105,7 +105,7 @@ SECRET = b'wh_'  # paste your secret here
 def validate_signature():
     signature = hmac.new(SECRET, request.data, hashlib.sha256).hexdigest()
 
-    if hmac.compare_digest(signature, request.headers.get('X-Pandabase-Signature', '')):
+    if hmac.compare_digest(signature, request.headers.get('X-webhook-Signature', '')):
         print('Valid signature. The response was sent by Pandabase.')
         return jsonify(message="Request processed"), 200
     else:
@@ -114,86 +114,6 @@ def validate_signature():
 
 if __name__ == '__main__':
     app.run(debug=True)
-```
-
-```go Go
-package main
-
-import (
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
-	"encoding/json"
-	"fmt"
-	"net/http"
-)
-
-func main() {
-	secret := "wh_" // paste your secret here
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		var body map[string]interface{}
-		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-			http.Error(w, "Error reading request body", http.StatusBadRequest)
-			return
-		}
-
-		h := hmac.New(sha256.New, []byte(secret))
-		jsonBody, _ := json.Marshal(body)
-		h.Write(jsonBody)
-		signature := hex.EncodeToString(h.Sum(nil))
-
-		if r.Header.Get("X-Pandabase-Signature") == signature {
-			fmt.Println("Valid signature. The response was sent by Pandabase.")
-		} else {
-			fmt.Println("Invalid signature.")
-		}
-	})
-
-	http.ListenAndServe(":8080", nil)
-}
-```
-
-```rust Rust
-use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer, Responder};
-use hmac::{Hmac, Mac};
-use sha2::Sha256;
-use serde_json::Value;
-use subtle::ConstantTimeEq;
-
-type HmacSha256 = Hmac<Sha256>;
-
-const SECRET: &str = "wh_";
-
-async fn validate_signature(req: HttpRequest, body: web::Json<Value>) -> impl Responder {
-    let mut mac = HmacSha256::new_from_slice(SECRET.as_bytes())
-        .expect("HMAC can take key of any size");
-
-    mac.update(serde_json::to_string(&body).unwrap().as_bytes());
-    let expected = hex::encode(mac.finalize().into_bytes());
-
-    match req.headers().get("x-pandabase-signature") {
-        Some(header) => {
-            let provided = header.to_str().unwrap_or("");
-            if expected.as_bytes().ct_eq(provided.as_bytes()).into() {
-                HttpResponse::Ok().body("Request processed")
-            } else {
-                HttpResponse::Unauthorized().body("Invalid signature")
-            }
-        }
-        None => HttpResponse::Unauthorized().body("Invalid signature")
-    }
-}
-
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new().route("/webhook", web::post().to(validate_signature))
-    })
-    .bind("127.0.0.1:8080")?
-    .run()
-    .await
-}
 ```
 
 </CodeGroup>

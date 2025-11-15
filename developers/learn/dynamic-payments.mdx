@@ -24,15 +24,18 @@ This has many practical applications, for example, a site selling dynamic course
 <Steps>
 <Step title="Grab the secrets">
 
-Log in to your account and navigate to the "API Tokens" section. Click the "Create New Token" button. The generated API token will look similar to this: `ey.xxxx`. Copy and securely store the API token.
+Log in to your account and navigate to the "API Tokens" section. Click the "Create New Token" button. The generated V3 API token will look similar to this: `sk_v3_xxxx`. Copy and securely store the API token.
 
-Next in your shop, create a new webhook. The webhook secret will look like this: `whsk_xxx`. Copy and securely store the webhook secret.
+Next in your shop, create a new webhook. The webhook secret will look like this: `wh_sk_xxx`. Copy and securely store the webhook secret.
 
-We are storing these two secrets as
+You'll also need your Storefront ID for the `X-Storefront-Id` header.
+
+We are storing these secrets as:
 
 ```env .env
-PANDABASE_API_TOKEN=""
-PANDABASE_WEBHOOK_SECRET=""
+PANDABASE_API_TOKEN="sk_v3_xxxx"
+PANDABASE_WEBHOOK_SECRET="wh_sk_xxx"
+PANDABASE_STOREFRONT_ID="your_storefront_id"
 ```
 
 in our `.env` file.
@@ -122,23 +125,19 @@ async function createPaymentSession(
 ): Promise<string> {
   try {
     const response = await fetch(
-      `https://api.pandabase.io/${process.env.PANDABASE_SHOP_ID}/shop_id/payments`,
+      "https://pandabase.io/api/payments",
       {
         method: "POST",
         headers: {
           Authorization: `Bearer ${process.env.PANDABASE_API_TOKEN}`,
           "Content-Type": "application/json",
+          "X-Storefront-Id": process.env.PANDABASE_STOREFRONT_ID!,
         },
         body: JSON.stringify({
-          dynamic: true,
           amount,
           currency: "USD",
           description: "Premium access",
-          params: {
-            default_values: {
-              full_name: "",
-              email: "",
-            },
+          display_ui: {
             fields: [
               {
                 type: "input",
@@ -149,17 +148,17 @@ async function createPaymentSession(
           },
           return_url: "https://your-site.com/success",
           cancel_url: "https://your-site.com/cancel",
-          tax_enabled: true,
         }),
       }
     );
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    const result = await response.json();
+
+    if (!result.ok) {
+      throw new Error(result.error?.message || "Failed to create payment session");
     }
 
-    const data = await response.json();
-    return data.payload.checkout_url;
+    return result.data.checkout_url;
   } catch (error) {
     console.error("Error creating payment session:", error);
     throw error;
@@ -199,20 +198,23 @@ In the webhook handler, implement the logic to grant access based on the usernam
 
 ```typescript
 app.post("/webhook", validateSignature, (req, res) => {
-  const event = req.body;
+  const webhook = req.body;
 
-  if (event.type === "payment.succeeded") {
-    const username = event.data.payment.fields[0].input; // username
-    const id = event.data.payment.id; // payment id
+  if (webhook.type === "payment.succeeded") {
+    const payment = webhook.data;
+    const username = payment.display_ui?.fields?.find((f: any) => f.name === "username")?.value;
+    const paymentId = payment.id;
 
-    grantAccess(username, id);
+    if (username) {
+      grantAccess(username, paymentId);
+    }
   }
 
   res.sendStatus(200);
 });
 
 function grantAccess(username: string, id: string) {
-  // Implement your logic
+  // Implement your logic here (e.g., Discord role assignment, database update, etc.)
   console.log(`Granting access to user: ${username} | Payment ID: ${id}`);
 }
 ```

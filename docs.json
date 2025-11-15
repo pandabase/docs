@@ -1,0 +1,88 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "aspen",
+  "name": "Pandabase",
+  "colors": {
+    "primary": "#0a8237",
+    "light": "#07C983",
+    "dark": "#0b7031"
+  },
+  "favicon": "/favicon.png",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Getting started",
+            "pages": ["index", "quickstart", "development"]
+          }
+        ]
+      },
+      {
+        "tab": "Developers",
+        "groups": [
+          {
+            "group": "Basics",
+            "pages": [
+              "developers/introduction",
+              "developers/pagination",
+              "developers/rate-limits",
+              "developers/responses",
+              "developers/changelog"
+            ]
+          },
+          {
+            "group": "Learn",
+            "pages": [
+              "developers/learn/lifecycle",
+              "developers/learn/dynamic-payments"
+            ]
+          },
+          {
+            "group": "SDKs",
+            "pages": ["developers/sdks/typescript", "developers/sdks/go"]
+          },
+          {
+            "group": "Webhooks",
+            "pages": [
+              "developers/webhooks/overview",
+              "developers/webhooks/events"
+            ]
+          },
+          {
+            "group": "API reference",
+            "openapi": "developers/openapi.json"
+          }
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo/dark.png",
+    "dark": "/logo/dark.png"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "mailto:hi@pandabase.io"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Merchant Portal",
+      "href": "https://pandabase.io/dash"
+    }
+  },
+  "contextual": {
+    "options": ["copy", "view"]
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/pandabasehq",
+      "github": "https://github.com/pandabase",
+      "discord": "https://discord.gg/pandabase"
+    }
+  }
+}
