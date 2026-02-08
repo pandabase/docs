@@ -105,7 +105,13 @@
           },
           "status": {
             "type": "string",
-            "enum": ["pending", "processing", "succeeded", "failed", "canceled"],
+            "enum": [
+              "pending",
+              "processing",
+              "succeeded",
+              "failed",
+              "canceled"
+            ],
             "example": "succeeded"
           },
           "description": {

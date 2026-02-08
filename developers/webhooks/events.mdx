@@ -3,99 +3,171 @@ title: "Events"
 description: "Types of possible events that Pandabase can send to your application."
 ---
 
-This is a list of all the types of events we currently send.
+This is a list of all the types of events we currently send. Each event is delivered to your configured webhook URL with a JSON payload.
 
 ## Webhook structure
 
-Each event contains a `data` object with details about the event.
+Every webhook delivery is a `POST` request with a JSON body. The top-level structure contains an `object` field and an `event` object with the event `type`, the order `id`, a `created_at` timestamp, and a `data` object with the event-specific payload.
 
 <CodeGroup>
 
 ```json Example Event
 {
-  "id": "wh_6f9a8b7c5d4e3f2a1b",
-  "type": "order.completed",
-  "data": {
-    ...resourceObject
+  "object": "payment",
+  "event": {
+    "type": "payment.success",
+    "id": "ord_abc123",
+    "created_at": 1707400000000,
+    "data": {
+      "order": {
+        "id": "ord_abc123",
+        "order_number": "inv_xyz789",
+        "status": "PROCESSING",
+        "amount": 2999,
+        "currency": "USD",
+        "gateway": "STRIPE",
+        "custom_fields": [
+          {
+            "key": "discord_username",
+            "label": { "type": "custom", "custom": "Discord Username" },
+            "type": "text",
+            "optional": false,
+            "text": { "minimum_length": 2, "maximum_length": 50 },
+            "value": "johndoe"
+          }
+        ]
+      },
+      "transaction": {
+        "id": "txn_def456",
+        "transaction_id": "pi_stripe_xxx",
+        "status": "SUCCESS",
+        "amount": 3199,
+        "fee": 200,
+        "currency": "USD",
+        "method": "STRIPE"
+      }
+    }
   }
 }
 ```
 
 ```typescript Type Definition
-import type { EventType } from "@pandabase/node"
-
-type WebhookPayload<T extends EventType, D> = {
-  type: T;
-  id: string;
-  data: D;
+type WebhookPayload = {
+  object: "payment";
+  event: {
+    type: WebhookEventType;
+    id: string;
+    created_at: number;
+    data: {
+      order?: {
+        id: string;
+        order_number: string;
+        status: string;
+        amount: number;
+        currency: string;
+        gateway: string;
+        custom_fields?: CustomField[];
+      };
+      transaction?: {
+        id: string;
+        transaction_id: string;
+        status: string;
+        amount: number;
+        fee: number;
+        currency: string;
+        method: string;
+      };
+      customer?: {
+        email: string;
+      };
+    };
+  };
 };
+
+type WebhookEventType =
+  | "payment.pending"
+  | "payment.success"
+  | "payment.paid"
+  | "payment.not_paid"
+  | "payment.refunded"
+  | "payment.disputed";
 ```
 
 </CodeGroup>
 
+## Webhook headers
 
-## Order events
+Every webhook delivery includes the following headers:
 
-### `order.created`
+| Header | Description |
+|--------|-------------|
+| `X-Pandabase-Signature` | HMAC-SHA256 hex digest of the JSON body, signed with your webhook secret |
+| `X-Pandabase-Timestamp` | Unix timestamp (milliseconds) of when the delivery was sent |
+| `X-Pandabase-Idempotency` | Unique delivery identifier for deduplication |
+| `Content-Type` | Always `application/json` |
+| `User-Agent` | `Pandabase (https://pandabase.io)` |
 
-Occurs when a new order is created.
+## Verifying signatures
 
-### `order.updated`
+Verify the `X-Pandabase-Signature` header to ensure the webhook was sent by Pandabase and not tampered with.
 
-Occurs when an order is updated.
+```typescript
+import crypto from "crypto";
 
-### `order.completed`
+function verifySignature(body: string, signature: string, secret: string): boolean {
+  const expected = crypto
+    .createHmac("sha256", secret)
+    .update(body)
+    .digest("hex");
 
-Occurs when an order is marked as completed.
+  return expected === signature;
+}
+```
 
-### `order.cancelled`
+## Retries
 
-Occurs when an order is cancelled.
-
-### `order.refunded`
-
-Occurs when an order is refunded.
+Failed webhook deliveries are retried up to **5 times** with exponential backoff starting at 1 second. Your endpoint should return a `2xx` status code to acknowledge receipt. Any other status code or a timeout (15 seconds) is treated as a failure.
 
 ## Payment events
 
-### `payment.created`
+### `payment.pending`
 
-Occurs when a new payment is created.
+Occurs when a payment intent is created and awaiting customer action. This is the first event fired when a customer proceeds to pay.
 
-### `payment.updated`
+**Data included:** `order`, `transaction`, `customer`
 
-Occurs when a payment is updated.
+### `payment.success`
 
-### `payment.succeeded`
+Occurs when a payment is successfully processed. This is the primary event to listen for when fulfilling orders.
 
-Occurs when a payment is successful.
+**Data included:** `order`, `transaction`
 
-### `payment.failed`
+<Note>
+  The `order.custom_fields` array is included in the `payment.success` event if
+  the checkout session had custom fields defined. Each field contains both the
+  definition and the customer's submitted `value`.
+</Note>
 
-Occurs when a payment fails.
+### `payment.paid`
+
+Occurs when a payment has been confirmed as paid by the payment provider.
+
+**Data included:** `transaction`
+
+### `payment.not_paid`
+
+Occurs when a payment fails or expires without being completed.
+
+**Data included:** `order`, `transaction`
 
 ### `payment.refunded`
 
-Occurs when a payment is refunded.
+Occurs when a payment is refunded, either partially or in full.
 
-### `payment.pending`
+**Data included:** `transaction`
 
-Occurs when a payment is pending.
+### `payment.disputed`
 
-## Dispute events
+Occurs when a customer opens a dispute (chargeback) on a payment.
 
-### `dispute.created`
-
-Occurs when a new dispute is created.
-
-### `dispute.updated`
-
-Occurs when a dispute is updated.
-
-### `dispute.won`
-
-Occurs when a dispute is resolved in your favor.
-
-### `dispute.lost`
-
-Occurs when a dispute is resolved in the customer's favor.
+**Data included:** `transaction`
